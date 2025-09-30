@@ -54,7 +54,7 @@ class ParserCommand extends Command
 
                 $items = $xml->xpath('//channel/item');
 
-                $items = array_slice($items, 0, 200);
+                $items = array_slice($items, 0, 20);
 
                 foreach ($items as $item) {
                     $title = (string) $item->title;
