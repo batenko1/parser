@@ -38,6 +38,9 @@ class ParserResultController extends Controller
                 ])
                     ->orderBy('last_views', $sortFilter);
             })
+            ->when(!$sortFilter, function ($query) {
+                $query->orderBy('created_at', 'desc');
+            })
 
             ->paginate(100);
 
