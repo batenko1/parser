@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Article;
 use App\Models\Site;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ParserResultController extends Controller
 {
@@ -28,12 +29,16 @@ class ParserResultController extends Controller
             ->when($siteFilter, function ($query, $siteFilter) {
                 $query->where('site_id', $siteFilter);
             })
-            ->when($sortFilter, function ($query) use($sortFilter) {
-                $query->orderBy('created_at', $sortFilter);
+            ->when($sortFilter, function ($query, $sortFilter) {
+                $query->addSelect([
+                    'last_views' => DB::table('article_stats')
+                        ->select('views')
+                        ->whereColumn('article_stats.article_id', 'articles.id')
+                        ->limit(1)
+                ])
+                    ->orderBy('last_views', $sortFilter);
             })
-            ->when(!$sortFilter, function ($query) use($sortFilter) {
-                $query->orderBy('id', 'desc');
-            })
+
             ->paginate(30);
 
         return view('index', [
