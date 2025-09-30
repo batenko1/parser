@@ -1,0 +1,47 @@
+services:
+    nginx:
+        image: nginx:alpine
+        volumes:
+            - ./:/var/www
+            - ./_docker/nginx/conf.d/nginx.conf:/etc/nginx/nginx.conf
+            - ./storage/app/public:/var/www/storage/app/public
+        ports:
+            - "${NGINX_PORT}:80"
+        environment:
+            - NGINX_PORT=${NGINX_PORT}
+        depends_on:
+            - app
+        container_name: nginx
+
+    app:
+        build:
+            context: .
+            dockerfile: _docker/app/Dockerfile
+        volumes:
+            - ./:/var/www
+            - ./_docker/app/custom.ini:/usr/local/etc/php/conf.d/custom.ini
+            - ./_docker/app/${OPCACHE_FILE:-opcache.ini}:/usr/local/etc/php/conf.d/opcache.ini
+        depends_on:
+            - db
+        container_name: app
+
+    db:
+        image: postgres:13
+        restart: always
+        volumes:
+            - db_data:/var/lib/postgresql/data
+        environment:
+            POSTGRES_DB: ${DB_DATABASE}
+            POSTGRES_USER: ${DB_USERNAME}
+            POSTGRES_PASSWORD: ${DB_PASSWORD}
+        ports:
+            - "8101:5432"
+        container_name: db
+
+volumes:
+    db_data:
+
+networks:
+    default:
+        name: global_net
+        external: true
