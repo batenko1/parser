@@ -21,9 +21,11 @@ services:
             - ./:/var/www
             - ./_docker/app/custom.ini:/usr/local/etc/php/conf.d/custom.ini
             - ./_docker/app/${OPCACHE_FILE:-opcache.ini}:/usr/local/etc/php/conf.d/opcache.ini
+            - ./_docker/supervisord.conf:/etc/supervisord.conf
         depends_on:
             - db
         container_name: app
+        command: ["/usr/bin/supervisord", "-c", "/etc/supervisord.conf"]
 
     db:
         image: postgres:13
