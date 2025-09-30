@@ -39,7 +39,7 @@ class ParserResultController extends Controller
                     ->orderBy('last_views', $sortFilter);
             })
 
-            ->paginate(30);
+            ->paginate(100);
 
         return view('index', [
             'articles' => $articles,
