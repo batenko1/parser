@@ -23,6 +23,7 @@ class ParserCommand extends Command
 
     public function handle(): void
     {
+        info('Start command');
         $sites = Site::query()->get();
 
         foreach ($sites as $site) {
