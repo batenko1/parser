@@ -66,7 +66,7 @@
                             <td class="px-4 py-3 font-medium">{{ $article->site->name }}</td>
                             <td class="px-4 py-3">{{ $article['title'] }}</td>
                             <td class="px-4 py-3">
-                                {{ $article->stats->last()?->views }}
+                                {{ $article->formatted_views }}
                             </td>
                             <td class="px-4 py-3 text-blue-600">
                                 <a href="{{ $article['link'] }}" target="_blank" class="hover:underline">
@@ -76,19 +76,40 @@
                         </tr>
 
                         <tr id="details-{{ $idx }}" class="hidden bg-gray-50">
-                            <td colspan="4" class="px-6 py-4">
+                            <td colspan="5" class="px-6 py-4">
                                 <h3 class="font-semibold text-gray-700 mb-2">Історія переглядів</h3>
                                 <ul class="space-y-1 text-sm text-gray-600">
                                     @foreach($article->stats ?? [] as $stat)
                                         <li class="flex justify-between border-b pb-1">
                                             <span>{{ $stat->created_at->format('d.m.Y H:i') }}</span>
-                                            <span class="font-semibold">{{ $stat->views }}</span>
+                                            <span class="font-semibold">{{ $stat->views }} / {{ $stat->views_speed }} в годину</span>
                                         </li>
                                     @endforeach
                                     @if($article->stats->count() === 0)
                                         <li class="text-gray-500">Немає даних</li>
                                     @endif
                                 </ul>
+
+                                <br>
+
+                                <div style="margin-bottom: 10px;">
+                                    <b>Title</b> ({{ \Illuminate\Support\Str::length($article->meta_title) }} символов) -
+                                    {{ $article->meta_title }}
+                                </div>
+
+                                <hr>
+
+                                <div style="margin-bottom: 10px;">
+                                    <b>Description</b> ({{ \Illuminate\Support\Str::length($article->meta_description) }} символов) -
+                                    {{ $article->meta_description }}
+                                </div>
+
+                                <hr>
+
+                                <div>
+                                    <b>Text</b> ({{ preg_match_all('/[\p{L}\p{N}_]+/u', strip_tags($article->text)) }} слів) -
+                                    {!! $article->text !!}
+                                </div>
                             </td>
                         </tr>
                     @empty

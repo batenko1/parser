@@ -5,7 +5,7 @@ namespace App\Services\ParserSites;
 use Illuminate\Support\Facades\Http;
 use Symfony\Component\DomCrawler\Crawler;
 
-class Tv24ParseService implements ParserSitesInterface
+class FocusParseService implements ParserSitesInterface
 {
     public function parse(string $link): array
     {
@@ -17,25 +17,30 @@ class Tv24ParseService implements ParserSitesInterface
         ];
 
         try {
-            $path = parse_url($link, PHP_URL_PATH) ?: $link;
+            preg_match('/(\d+)(?:-[^\/]*)?$/', parse_url($link, PHP_URL_PATH), $matches);
+            $articleId = $matches[1] ?? null;
 
-            if (!preg_match('/n(\d+)(?:\.html)?$/', $path, $matches)) {
+            if (!$articleId) {
                 return $data;
             }
 
-            $id = $matches[1];
+            $apiUrl = "https://focus.ua/uk/ajax/articles/viewed/{$articleId}";
 
-            $counterUrl = "https://counter24.luxnet.ua/counter/{$id}";
-            $responseCounter = Http::withHeaders([
+            $responseViews = Http::withHeaders([
                 'Accept' => 'application/json, text/javascript, */*; q=0.01',
-                'Referer' => $link,
+                'Content-Type' => 'application/json',
+                'X-Requested-With' => 'XMLHttpRequest',
                 'User-Agent' => 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36',
-            ])->get($counterUrl);
+                'Referer' => $link,
+                'Origin' => 'https://focus.ua',
+            ])->post($apiUrl);
 
-            if ($responseCounter->successful()) {
-                $json = $responseCounter->json();
-                if (is_array($json) && isset($json['value'])) {
-                    $data['views'] = (int)$json['value'];
+            if ($responseViews->successful()) {
+                $json = $responseViews->json();
+                if (is_array($json) && isset($json['count'])) {
+                    $data['views'] = (int) $json['count'];
+                } elseif (is_numeric($json)) {
+                    $data['views'] = (int) $json;
                 }
             }
 
@@ -61,9 +66,9 @@ class Tv24ParseService implements ParserSitesInterface
             $data['meta_title'] = trim($metaTitle);
             $data['meta_description'] = trim($metaDescription);
 
-            $articleNode = $crawler->filter('.article-text')->first();
-            if ($articleNode->count()) {
-                $articleText = trim(preg_replace('/\s+/', ' ', strip_tags($articleNode->html())));
+            $textNode = $crawler->filter('.s-content')->first();
+            if ($textNode->count()) {
+                $articleText = trim(preg_replace('/\s+/', ' ', strip_tags($textNode->html())));
                 $data['text'] = $articleText;
             }
 

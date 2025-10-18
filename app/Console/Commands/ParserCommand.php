@@ -5,8 +5,11 @@ namespace App\Console\Commands;
 use App\Models\Site;
 use App\Services\ArticleService;
 use App\Services\ParserSites\CensorParseService;
+use App\Services\ParserSites\FocusParseService;
 use App\Services\ParserSites\GlavredParseService;
+use App\Services\ParserSites\KorrespondentParseService;
 use App\Services\ParserSites\ObozrevatelParseService;
+use App\Services\ParserSites\PravdaParseService;
 use App\Services\ParserSites\RadiotrekParseService;
 use App\Services\ParserSites\RbcParseService;
 use App\Services\ParserSites\TsnParseService;
@@ -24,7 +27,9 @@ class ParserCommand extends Command
     public function handle(): void
     {
         info('Start command');
-        $sites = Site::query()->get();
+        $sites = Site::query()
+//            ->where('name', 'Pravda')
+            ->get();
 
         foreach ($sites as $site) {
             $this->info("Парсим сайт: {$site->name}");
@@ -60,9 +65,9 @@ class ParserCommand extends Command
                     $title = (string) $item->title;
                     $link  = (string) $item->link;
 
-                    $views = $this->getArticleStat($site->name, $link);
+                    $data = $this->getArticleStat($site->name, $link);
 
-                    ArticleService::storeData($title, $link, $site->id, $views);
+                    ArticleService::storeData($title, $link, $site->id, $data);
                 }
             } catch (Exception $e) {
                 $this->error("Ошибка при парсинге {$site->name}: " . $e->getMessage());
@@ -70,9 +75,15 @@ class ParserCommand extends Command
         }
     }
 
-    private function getArticleStat($siteName, $link): int|string
+    private function getArticleStat($siteName, $link): array
     {
-        $views = 0;
+        $data = [
+            'meta_title' => '',
+            'meta_description' => '',
+            'text' => '',
+            'views' => 0
+        ];
+
         $service = null;
         switch ($siteName) {
             case 'Unian':
@@ -99,12 +110,21 @@ class ParserCommand extends Command
             case 'Obozrevatel':
                 $service = app(ObozrevatelParseService::class);;
                 break;
+            case 'Focus':
+                $service = app(FocusParseService::class);
+                break;
+            case 'Korrespondent':
+                $service = app(KorrespondentParseService::class);
+                break;
+            case 'Pravda':
+                $service = app(PravdaParseService::class);
+                break;
         }
 
         if($service) {
-            $views = $service->parse($link);
+            $data = $service->parse($link);
         }
 
-        return $views;
+        return $data;
     }
 }

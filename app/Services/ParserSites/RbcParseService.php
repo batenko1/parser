@@ -5,10 +5,13 @@ namespace App\Services\ParserSites;
 class RbcParseService implements ParserSitesInterface
 {
 
-    public function parse(string $link): int|string
+    public function parse(string $link): array
     {
-//        dd($link);
-
-        return 0;
+        return [
+            'meta_title' => '',
+            'meta_description' => '',
+            'text' => '',
+            'views' => 0,
+        ];
     }
 }

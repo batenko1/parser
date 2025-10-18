@@ -9,7 +9,10 @@ class Article extends Model
     protected $fillable = [
         'title',
         'link',
-        'site_id'
+        'site_id',
+        'meta_title',
+        'meta_description',
+        'text',
     ];
 
     public function stats()
@@ -20,5 +23,20 @@ class Article extends Model
     public function site()
     {
         return $this->belongsTo(Site::class, 'site_id');
+    }
+
+    public function getFormattedViewsAttribute(): string
+    {
+        $views = $this->stats->last()?->views ?? 0;
+
+        if ($views >= 1000000) {
+            return round($views / 1000000, 1) . 'M';
+        }
+
+        if ($views >= 1000) {
+            return round($views / 1000, 1) . 'k';
+        }
+
+        return (string) $views;
     }
 }

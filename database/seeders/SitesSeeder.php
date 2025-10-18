@@ -49,12 +49,26 @@ class SitesSeeder extends Seeder
             [
                 'name' => 'Vsviti',
                 'link' => 'https://vsviti.com.ua/feed'
+            ],
+            [
+                'name' => 'Focus',
+                'link' => 'https://focus.ua/uk/modules/rss.php'
+            ],
+            [
+                'name' => 'Korrespondent',
+                'link' => 'http://k.img.com.ua/rss/ua/all_news2.0.xml'
+            ],
+            [
+                'name' => 'Pravda',
+                'link' => 'https://www.pravda.com.ua/rss'
             ]
         ];
 
-
         foreach ($sites as $site) {
-            Site::query()->create($site);
+            Site::query()->updateOrCreate(
+                ['name' => $site['name']],
+                ['link' => $site['link']]
+            );
         }
 
     }

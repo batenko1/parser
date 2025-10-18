@@ -5,7 +5,7 @@ namespace App\Services\ParserSites;
 use Illuminate\Support\Facades\Http;
 use Symfony\Component\DomCrawler\Crawler;
 
-class ObozrevatelParseService implements ParserSitesInterface
+class KorrespondentParseService implements ParserSitesInterface
 {
     public function parse(string $link): array
     {
@@ -17,6 +17,7 @@ class ObozrevatelParseService implements ParserSitesInterface
         ];
 
         try {
+            // 1️⃣ Загружаем HTML страницы
             $response = Http::withHeaders([
                 'User-Agent'      => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
                 'Accept'          => 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
@@ -41,13 +42,13 @@ class ObozrevatelParseService implements ParserSitesInterface
             $data['meta_title'] = trim($metaTitle);
             $data['meta_description'] = trim($metaDescription);
 
-            $viewsNode = $crawler->filter('.reaction_value')->first();
-            if ($viewsNode->count()) {
-                $viewsText = trim($viewsNode->text());
+            $viewsElement = $crawler->filter('.post-item__views')->first();
+            if ($viewsElement->count()) {
+                $viewsText = trim($viewsElement->text());
                 $data['views'] = (int) preg_replace('/[^\d]/', '', $viewsText);
             }
 
-            $textNode = $crawler->filter('.newsFull_text')->first();
+            $textNode = $crawler->filter('.post-item__text')->first();
             if ($textNode->count()) {
                 $articleText = trim(preg_replace('/\s+/', ' ', strip_tags($textNode->html())));
                 $data['text'] = $articleText;

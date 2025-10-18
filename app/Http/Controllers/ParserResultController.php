@@ -34,6 +34,7 @@ class ParserResultController extends Controller
                     'last_views' => DB::table('article_stats')
                         ->select('views')
                         ->whereColumn('article_stats.article_id', 'articles.id')
+                        ->orderByDesc('created_at')
                         ->limit(1)
                 ])
                     ->orderBy('last_views', $sortFilter);
