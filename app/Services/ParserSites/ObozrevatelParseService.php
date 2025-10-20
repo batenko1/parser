@@ -44,13 +44,15 @@ class ObozrevatelParseService implements ParserSitesInterface
             $viewsNode = $crawler->filter('.reaction_value')->first();
             if ($viewsNode->count()) {
                 $viewsText = trim($viewsNode->text());
-                $data['views'] = (int) preg_replace('/[^\d]/', '', $viewsText);
-            }
 
-            $textNode = $crawler->filter('.newsFull_text')->first();
-            if ($textNode->count()) {
-                $articleText = trim(preg_replace('/\s+/', ' ', strip_tags($textNode->html())));
-                $data['text'] = $articleText;
+                $viewsText = mb_strtolower($viewsText);
+                $viewsText = str_replace([' ', ','], ['', '.'], $viewsText);
+
+                if (preg_match('/([\d.]+)\s*(т|тис|k)/u', $viewsText, $matches)) {
+                    $data['views'] = (int) round(((float)$matches[1]) * 1000);
+                } else {
+                    $data['views'] = (int) preg_replace('/[^\d]/', '', $viewsText);
+                }
             }
 
         } catch (\Throwable $e) {

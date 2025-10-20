@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Console\Commands;
+namespace App\Jobs;
 
-use App\Models\Site;
-use App\Services\ArticleService;
+use App\Models\Article;
+use App\Models\ArticleStat;
 use App\Services\ParserSites\CensorParseService;
 use App\Services\ParserSites\FocusParseService;
 use App\Services\ParserSites\GlavredParseService;
@@ -16,69 +16,53 @@ use App\Services\ParserSites\TsnParseService;
 use App\Services\ParserSites\Tv24ParseService;
 use App\Services\ParserSites\UnianParseService;
 use App\Services\ParserSites\VsvitiParseService;
-use Exception;
-use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Http;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
 
-class ParserCommand extends Command
+class UpdateArticleStatJob implements ShouldQueue
 {
-    protected $signature = 'app:parser-command {type?}';
-    protected $description = 'Парсинг RSS новостей';
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+
+    public int $articleId;
+
+    public function __construct(int $articleId)
+    {
+        $this->articleId = $articleId;
+    }
 
     public function handle(): void
     {
-        $type = $this->argument('type');
-        info('Start command');
-        $sites = Site::query()
-            ->when($type, function ($query, $type) {
-                $query->where('name', $type);
-            })
-//            ->where('name', 'Pravda')
-            ->get();
+        $article = Article::find($this->articleId);
+        if (!$article) return;
 
-        foreach ($sites as $site) {
-            $this->info("Парсим сайт: {$site->name}");
+        $data = $this->getArticleStat($article->site->name, $article->link);
 
-            try {
+        $lastStat = ArticleStat::query()
+            ->where('article_id', $article->id)
+            ->latest('id')
+            ->first();
 
-                try {
-                    $xmlData = file_get_contents($site->link);
-                }
-                catch (\Exception $e) {
-                    $response = Http::withHeaders([
-                        'User-Agent'      => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-                        'Accept'          => 'application/rss+xml,application/xml;q=0.9,*/*;q=0.8',
-                    ])->get($site->link);
+        $views = $data['views'] ?? 0;
+        $viewsSpeed = null;
 
-                    if ($response->successful()) {
-                        $xmlData = $response->body();
-                    }
-                }
-
-                if (!$xmlData) {
-                    $this->error("Не удалось получить данные с {$site->link}");
-                    continue;
-                }
-
-                $xml = new \SimpleXMLElement($xmlData);
-
-                $items = $xml->xpath('//channel/item');
-
-                $items = array_slice($items, 0, 20);
-
-                foreach ($items as $item) {
-                    $title = (string) $item->title;
-                    $link  = (string) $item->link;
-
-                    $data = $this->getArticleStat($site->name, $link);
-
-                    ArticleService::storeData($title, $link, $site->id, $data);
-                }
-            } catch (Exception $e) {
-                $this->error("Ошибка при парсинге {$site->name}: " . $e->getMessage());
+        if ($lastStat) {
+            $hoursPassed = $lastStat->created_at->floatDiffInHours(now());
+            if ($hoursPassed > 0.0167) {
+                $viewsDiff = max(0, $views - $lastStat->views);
+                $viewsSpeed = $hoursPassed > 0 ? $viewsDiff / $hoursPassed : null;
             }
         }
+
+        ArticleStat::query()->create([
+            'article_id' => $article->id,
+            'views' => $views,
+            'views_speed' => $viewsSpeed,
+        ]);
     }
+
 
     private function getArticleStat($siteName, $link): array
     {

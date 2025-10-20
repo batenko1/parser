@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Jobs\UpdateArticleStatJob;
 use App\Models\Article;
 use App\Models\ArticleStat;
 use Carbon\Carbon;
@@ -23,23 +24,61 @@ class ArticleService
             ]);
         }
 
-        $articleStat = ArticleStat::query()->where('article_id', $article->id)->first();
+        $lastStat = ArticleStat::query()
+            ->where('article_id', $article->id)
+            ->latest('id')
+            ->first();
 
-        $viewsSpeed = null;
-        if ($articleStat) {
-            $hoursPassed = Carbon::now()->floatDiffInHours($articleStat->created_at);
+        if (!$lastStat) {
+//            $viewsSpeed = null;
+//
+//
+//            if ($lastStat) {
+//                $hoursPassed = $lastStat->created_at->floatDiffInHours(now(), false);
+//
+//                if ($hoursPassed > 0.0167) {
+//                    $viewsDiff = max(0, ($data['views'] ?? 0) - $lastStat->views);
+//                    $viewsSpeed = $viewsDiff / $hoursPassed;
+//
+//                }
+//            }
 
-            if ($hoursPassed > 0) {
-                $viewsSpeed = ($data['views'] - $articleStat->views) / $hoursPassed;
-            }
-        }
+//            if (!$lastStat || $lastStat->created_at < now()->subHour()) {
+//
+//                ArticleStat::query()->create([
+//                    'article_id' => $article->id,
+//                    'views' => $data['views'] ?? 0,
+//                    'views_speed' => $viewsSpeed,
+//                ]);
+//            }
 
-        if (!$articleStat || $articleStat->created_at < now()->subHour()) {
             ArticleStat::query()->create([
                 'article_id' => $article->id,
                 'views' => $data['views'] ?? 0,
-                'views_speed' => $viewsSpeed,
+                'views_speed' => null,
             ]);
+
+            self::scheduleUpdates($article->id);
+
+        }
+
+    }
+
+    protected static function scheduleUpdates(int $articleId): void
+    {
+        $periods = [
+            45,      // 0:45h
+            90,      // 1.5h
+            180,     // 3h
+            360,     // 6h
+            720,     // 12h
+            1440,    // 24h
+            2880,    // 48h
+        ];
+
+        foreach ($periods as $minutes) {
+            info($minutes);
+            UpdateArticleStatJob::dispatch($articleId)->delay(now()->addMinutes($minutes));
         }
     }
 }

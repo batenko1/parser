@@ -24,8 +24,13 @@ services:
             - ./_docker/supervisord.conf:/etc/supervisord.conf
         depends_on:
             - db
+            - redis
         container_name: app
         command: ["/usr/bin/supervisord", "-c", "/etc/supervisord.conf"]
+        environment:
+            REDIS_HOST: redis
+            REDIS_PORT: 6379
+            QUEUE_CONNECTION: redis
 
     db:
         image: postgres:13
@@ -40,8 +45,18 @@ services:
             - "8101:5432"
         container_name: db
 
+    redis:
+        image: redis:alpine
+        container_name: redis
+        restart: always
+        ports:
+            - "6379:6379"
+        volumes:
+            - redis_data:/data
+
 volumes:
     db_data:
+    redis_data:
 
 networks:
     default:

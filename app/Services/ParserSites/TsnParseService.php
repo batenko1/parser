@@ -42,7 +42,16 @@ class TsnParseService implements ParserSitesInterface
             $viewsNode = $crawler->filter('.c-entry__views')->first();
             if ($viewsNode->count()) {
                 $viewsText = trim($viewsNode->text());
-                $data['views'] = (int) preg_replace('/[^\d]/', '', $viewsText);
+                $viewsText = mb_strtolower($viewsText);
+                $viewsText = str_replace([' ', ','], ['', '.'], $viewsText);
+
+                if (preg_match('/([\d.]+)\s*(k|т|тис|тыс)/u', $viewsText, $matches)) {
+                    $data['views'] = (int) round(((float)$matches[1]) * 1000);
+                } elseif (preg_match('/([\d.]+)\s*(m|млн)/u', $viewsText, $matches)) {
+                    $data['views'] = (int) round(((float)$matches[1]) * 1_000_000);
+                } else {
+                    $data['views'] = (int) preg_replace('/[^\d]/', '', $viewsText);
+                }
             }
 
             $articleNode = $crawler->filter('.c-prose.c-post__inner')->first();
