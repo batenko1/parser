@@ -53,6 +53,8 @@ class CensorParseService implements ParserSitesInterface
                 $data['text'] = $articleText;
             }
 
+            dd($data);
+
         } catch (\Throwable $e) {
             $data['error'] = $e->getMessage();
         }
