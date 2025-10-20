@@ -24,6 +24,8 @@ class CensorParseService implements ParserSitesInterface
                 'Referer' => $link,
             ])->get($link);
 
+            dd($response, $response->getStatusCode());
+
             if (! $response->successful()) {
                 return $data;
             }
