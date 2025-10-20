@@ -21,13 +21,17 @@ use Illuminate\Support\Facades\Http;
 
 class ParserCommand extends Command
 {
-    protected $signature = 'app:parser-command';
+    protected $signature = 'app:parser-command {type?}';
     protected $description = 'Парсинг RSS новостей';
 
     public function handle(): void
     {
+        $type = $this->argument('type');
         info('Start command');
         $sites = Site::query()
+            ->when($type, function ($query, $type) {
+                $query->where('name', $type);
+            })
 //            ->where('name', 'Pravda')
             ->get();
 
@@ -66,6 +70,10 @@ class ParserCommand extends Command
                     $link  = (string) $item->link;
 
                     $data = $this->getArticleStat($site->name, $link);
+
+                    if($type) {
+                        dd($data);
+                    }
 
                     ArticleService::storeData($title, $link, $site->id, $data);
                 }
