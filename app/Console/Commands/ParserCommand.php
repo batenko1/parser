@@ -132,7 +132,6 @@ class ParserCommand extends Command
         if($service) {
             $data = $service->parse($link);
         }
-        dd($data, $service);
 
         return $data;
     }
