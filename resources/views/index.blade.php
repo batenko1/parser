@@ -56,6 +56,7 @@
                         <th class="px-4 py-3">Сайт</th>
                         <th class="px-4 py-3">Заголовок</th>
                         <th class="px-4 py-3">Перегляди</th>
+                        <th class="px-4 py-3">Швидкість за годину</th>
                         <th class="px-4 py-3">Посилання</th>
                     </tr>
                     </thead>
@@ -67,6 +68,9 @@
                             <td class="px-4 py-3">{{ $article['title'] }}</td>
                             <td class="px-4 py-3">
                                 {{ $article->formatted_views }}
+                            </td>
+                            <td class="px-4 py-3">
+                                {{ round($article->stats->sortByDesc('id')->first()->views_speed) }}
                             </td>
                             <td class="px-4 py-3 text-blue-600">
                                 <a href="{{ $article['link'] }}" target="_blank" class="hover:underline">

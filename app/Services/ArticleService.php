@@ -77,7 +77,6 @@ class ArticleService
         ];
 
         foreach ($periods as $minutes) {
-            info($minutes);
             UpdateArticleStatJob::dispatch($articleId)->delay(now()->addMinutes($minutes));
         }
     }
