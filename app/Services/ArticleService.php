@@ -5,7 +5,6 @@ namespace App\Services;
 use App\Jobs\UpdateArticleStatJob;
 use App\Models\Article;
 use App\Models\ArticleStat;
-use Carbon\Carbon;
 
 class ArticleService
 {
@@ -30,27 +29,6 @@ class ArticleService
             ->first();
 
         if (!$lastStat) {
-//            $viewsSpeed = null;
-//
-//
-//            if ($lastStat) {
-//                $hoursPassed = $lastStat->created_at->floatDiffInHours(now(), false);
-//
-//                if ($hoursPassed > 0.0167) {
-//                    $viewsDiff = max(0, ($data['views'] ?? 0) - $lastStat->views);
-//                    $viewsSpeed = $viewsDiff / $hoursPassed;
-//
-//                }
-//            }
-
-//            if (!$lastStat || $lastStat->created_at < now()->subHour()) {
-//
-//                ArticleStat::query()->create([
-//                    'article_id' => $article->id,
-//                    'views' => $data['views'] ?? 0,
-//                    'views_speed' => $viewsSpeed,
-//                ]);
-//            }
 
             ArticleStat::query()->create([
                 'article_id' => $article->id,
@@ -77,6 +55,7 @@ class ArticleService
         ];
 
         foreach ($periods as $minutes) {
+            sleep(2);
             UpdateArticleStatJob::dispatch($articleId)->delay(now()->addMinutes($minutes));
         }
     }

@@ -9,6 +9,7 @@ class ArticleStat extends Model
     protected $fillable = [
         'article_id',
         'views',
-        'views_speed'
+        'views_speed',
+        'error',
     ];
 }

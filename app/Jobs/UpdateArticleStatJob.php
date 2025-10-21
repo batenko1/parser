@@ -60,6 +60,7 @@ class UpdateArticleStatJob implements ShouldQueue
             'article_id' => $article->id,
             'views' => $views,
             'views_speed' => $viewsSpeed,
+            'error' => isset($data['error']) ? $data['error'] : null,
         ]);
     }
 
@@ -97,7 +98,7 @@ class UpdateArticleStatJob implements ShouldQueue
                 $service = app(CensorParseService::class);
                 break;
             case 'Obozrevatel':
-                $service = app(ObozrevatelParseService::class);;
+                $service = app(ObozrevatelParseService::class);
                 break;
             case 'Focus':
                 $service = app(FocusParseService::class);
