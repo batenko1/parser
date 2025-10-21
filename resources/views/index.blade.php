@@ -80,7 +80,7 @@
                         </tr>
 
                         <tr id="details-{{ $idx }}" class="hidden bg-gray-50">
-                            <td colspan="5" class="px-6 py-4">
+                            <td colspan="6" class="px-6 py-4">
                                 <h3 class="font-semibold text-gray-700 mb-2">Історія переглядів</h3>
                                 <ul class="space-y-1 text-sm text-gray-600">
                                     @foreach($article->stats ?? [] as $stat)
