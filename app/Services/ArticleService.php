@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Jobs\UpdateArticleStatJob;
 use App\Models\Article;
 use App\Models\ArticleStat;
+use App\Models\ScheduledArticleUpdate;
 
 class ArticleService
 {
@@ -54,8 +55,18 @@ class ArticleService
             2880,    // 48h
         ];
 
+        $now  = now();
+
         foreach ($periods as $minutes) {
-            UpdateArticleStatJob::dispatch($articleId)->delay(now()->addMinutes($minutes));
+            $rows[] = [
+                'article_id' => $articleId,
+                'run_at'     => $now->copy()->addMinutes($minutes),
+                'processed'  => false,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ];
         }
+
+        ScheduledArticleUpdate::query()->insert($rows);
     }
 }

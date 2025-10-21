@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Article;
 use App\Models\ArticleStat;
+use App\Models\ScheduledArticleUpdate;
 use Illuminate\Database\Seeder;
 
 class ClearDBSeeder extends Seeder
@@ -15,5 +16,6 @@ class ClearDBSeeder extends Seeder
     {
         Article::query()->truncate();
         ArticleStat::query()->truncate();
+        ScheduledArticleUpdate::query()->truncate();
     }
 }
