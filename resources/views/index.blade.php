@@ -83,7 +83,7 @@
                             <td colspan="6" class="px-6 py-4">
                                 <h3 class="font-semibold text-gray-700 mb-2">Історія переглядів</h3>
                                 <ul class="space-y-1 text-sm text-gray-600">
-                                    @foreach($article->stats ?? [] as $stat)
+                                    @foreach($article->stats()->get() as $stat)
                                         <li class="flex justify-between border-b pb-1">
                                             <span>{{ $stat->created_at->format('d.m.Y H:i') }}</span>
                                             <span class="font-semibold">{{ $stat->views }} / {{ $stat->views_speed ? round($stat->views_speed) : 0 }} в годину</span>
