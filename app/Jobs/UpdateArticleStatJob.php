@@ -35,7 +35,7 @@ class UpdateArticleStatJob implements ShouldQueue
 
     public function handle(): void
     {
-        $article = Article::find($this->articleId);
+        $article = Article::query()->find($this->articleId);
         if (!$article) return;
 
         $data = $this->getArticleStat($article->site->name, $article->link);
@@ -60,7 +60,7 @@ class UpdateArticleStatJob implements ShouldQueue
             'article_id' => $article->id,
             'views' => $views,
             'views_speed' => $viewsSpeed,
-            'error' => isset($data['error']) ? $data['error'] : null,
+            'error' => $data['error'] ?? null,
         ]);
     }
 
