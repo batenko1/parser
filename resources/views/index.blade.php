@@ -67,7 +67,7 @@
                             <td class="px-4 py-3 font-medium">{{ $article->site->name }}</td>
                             <td class="px-4 py-3">{{ $article['title'] }}</td>
                             <td class="px-4 py-3">
-                                {{ $article->formatted_views }}
+                                {{ $article->stats->sortByDesc('id')->first()->views }}
                             </td>
                             <td class="px-4 py-3">
                                 {{ round($article->stats->sortByDesc('id')->first()->views_speed) }}

@@ -4,9 +4,12 @@ namespace App\Console\Commands;
 
 use App\Models\Site;
 use App\Services\ArticleService;
+use App\Services\ParserSites\BlikParseService;
 use App\Services\ParserSites\CensorParseService;
+use App\Services\ParserSites\DefenceUaParseService;
 use App\Services\ParserSites\FocusParseService;
 use App\Services\ParserSites\GlavredParseService;
+use App\Services\ParserSites\ItcParseService;
 use App\Services\ParserSites\KorrespondentParseService;
 use App\Services\ParserSites\ObozrevatelParseService;
 use App\Services\ParserSites\PravdaParseService;
@@ -15,7 +18,9 @@ use App\Services\ParserSites\RbcParseService;
 use App\Services\ParserSites\TsnParseService;
 use App\Services\ParserSites\Tv24ParseService;
 use App\Services\ParserSites\UnianParseService;
+use App\Services\ParserSites\UnnParseService;
 use App\Services\ParserSites\VsvitiParseService;
+use App\Services\ParserSites\ZaxidParseService;
 use Exception;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Http;
@@ -33,7 +38,7 @@ class ParserCommand extends Command
             ->when($type, function ($query, $type) {
                 $query->where('name', $type);
             })
-//            ->where('name', 'Pravda')
+//            ->where('name', 'Defence-ua')
             ->get();
 
         foreach ($sites as $site) {
@@ -43,11 +48,10 @@ class ParserCommand extends Command
 
                 try {
                     $xmlData = file_get_contents($site->link);
-                }
-                catch (\Exception $e) {
+                } catch (\Exception $e) {
                     $response = Http::withHeaders([
-                        'User-Agent'      => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-                        'Accept'          => 'application/rss+xml,application/xml;q=0.9,*/*;q=0.8',
+                        'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+                        'Accept' => 'application/rss+xml,application/xml;q=0.9,*/*;q=0.8',
                     ])->get($site->link);
 
                     if ($response->successful()) {
@@ -67,15 +71,15 @@ class ParserCommand extends Command
                 $items = array_slice($items, 0, 20);
 
                 foreach ($items as $item) {
-                    $title = (string) $item->title;
-                    $link  = (string) $item->link;
+                    $title = (string)$item->title;
+                    $link = (string)$item->link;
 
                     $data = $this->getArticleStat($site->name, $link);
 
                     ArticleService::storeData($title, $link, $site->id, $data);
                 }
             } catch (Exception $e) {
-                $this->error("Ошибка при парсинге {$site->name}: " . $e->getMessage());
+                $this->error("Error parse {$site->name}: " . $e->getMessage());
             }
         }
     }
@@ -127,9 +131,24 @@ class ParserCommand extends Command
             case 'Vsviti':
                 $service = app(VsvitiParseService::class);
                 break;
+            case 'Zaxid':
+                $service = app(ZaxidParseService::class);
+                break;
+            case 'Unn':
+                $service = app(UnnParseService::class);
+                break;
+            case 'Itc':
+                $service = app(ItcParseService::class);
+                break;
+            case 'Blik':
+                $service = app(BlikParseService::class);
+                break;
+            case 'Defence-ua':
+                $service = app(DefenceUaParseService::class);
+                break;
         }
 
-        if($service) {
+        if ($service) {
             $data = $service->parse($link);
         }
 

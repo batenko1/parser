@@ -61,6 +61,26 @@ class SitesSeeder extends Seeder
             [
                 'name' => 'Pravda',
                 'link' => 'https://www.pravda.com.ua/rss'
+            ],
+            [
+                'name' => 'Zaxid',
+                'link' => 'https://zaxid.net/rss'
+            ],
+            [
+                'name' => 'Unn',
+                'link' => 'https://unn.ua/rss/news_uk.xml'
+            ],
+            [
+                'name' => 'Itc',
+                'link' => 'https://itc.ua/ua/feed'
+            ],
+            [
+                'name' => 'Blik',
+                'link' => 'https://blik.ua/rss.xml'
+            ],
+            [
+                'name' => 'Defence-ua',
+                'link' => 'https://defence-ua.com/rss/feed.xml'
             ]
         ];
 
