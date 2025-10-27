@@ -17,6 +17,7 @@ use App\Services\ParserSites\RadiotrekParseService;
 use App\Services\ParserSites\RbcParseService;
 use App\Services\ParserSites\TsnParseService;
 use App\Services\ParserSites\Tv24ParseService;
+use App\Services\ParserSites\UkranewsParseService;
 use App\Services\ParserSites\UnianParseService;
 use App\Services\ParserSites\UnnParseService;
 use App\Services\ParserSites\VsvitiParseService;
@@ -38,7 +39,7 @@ class ParserCommand extends Command
             ->when($type, function ($query, $type) {
                 $query->where('name', $type);
             })
-//            ->where('name', 'Defence-ua')
+//            ->where('name', 'Ukranews')
             ->get();
 
         foreach ($sites as $site) {
@@ -145,6 +146,9 @@ class ParserCommand extends Command
                 break;
             case 'Defence-ua':
                 $service = app(DefenceUaParseService::class);
+                break;
+            case 'Ukranews':
+                $service = app(UkranewsParseService::class);
                 break;
         }
 

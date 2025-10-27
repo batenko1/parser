@@ -81,6 +81,10 @@ class SitesSeeder extends Seeder
             [
                 'name' => 'Defence-ua',
                 'link' => 'https://defence-ua.com/rss/feed.xml'
+            ],
+            [
+                'name' => 'Ukranews',
+                'link' => 'https://ukranews.com/rss/all_uk.xml'
             ]
         ];
 
