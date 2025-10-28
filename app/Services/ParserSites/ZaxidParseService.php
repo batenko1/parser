@@ -5,8 +5,9 @@ namespace App\Services\ParserSites;
 use Illuminate\Support\Facades\Http;
 use Symfony\Component\DomCrawler\Crawler;
 
-class ZaxidParseService implements ParserSitesInterface
+class ZaxidParseService extends BaseParseService implements ParserSitesInterface
 {
+
     public function parse(string $link): array
     {
         $data = [
@@ -26,11 +27,9 @@ class ZaxidParseService implements ParserSitesInterface
             $id = $matches[1];
             $counterUrl = "https://zaxid.net/counter/{$id}";
 
-            $responseCounter = Http::withHeaders([
-                'Accept' => 'application/json, text/javascript, */*; q=0.01',
-                'Referer' => $link,
-                'User-Agent' => 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36',
-            ])->get($counterUrl);
+            $headers = $this->getRandomHeaders($link);
+
+            $responseCounter = Http::withHeaders($headers)->get($counterUrl);
 
             if ($responseCounter->successful()) {
                 $json = $responseCounter->json();
@@ -39,10 +38,7 @@ class ZaxidParseService implements ParserSitesInterface
                 }
             }
 
-            $response = Http::withHeaders([
-                'User-Agent' => 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36',
-                'Accept-Language' => 'uk-UA,uk;q=0.9,en;q=0.8',
-            ])->get($link);
+            $response = Http::withHeaders($headers)->get($link);
 
             if (!$response->successful()) {
                 return $data;

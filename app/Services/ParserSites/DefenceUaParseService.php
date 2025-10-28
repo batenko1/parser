@@ -5,7 +5,7 @@ namespace App\Services\ParserSites;
 use Illuminate\Support\Facades\Http;
 use Symfony\Component\DomCrawler\Crawler;
 
-class DefenceUaParseService implements ParserSitesInterface
+class DefenceUaParseService extends BaseParseService implements ParserSitesInterface
 {
     public function parse(string $link): array
     {
@@ -17,10 +17,10 @@ class DefenceUaParseService implements ParserSitesInterface
         ];
 
         try {
-            $response = Http::withHeaders([
-                'User-Agent' => 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36',
-                'Accept-Language' => 'uk-UA,uk;q=0.9,en;q=0.8',
-            ])->get($link);
+
+            $headers = $this->getRandomHeaders($link);
+
+            $response = Http::withHeaders($headers)->get($link);
 
             if (!$response->successful()) {
                 return $data;

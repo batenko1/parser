@@ -5,7 +5,7 @@ namespace App\Services\ParserSites;
 use Illuminate\Support\Facades\Http;
 use Symfony\Component\DomCrawler\Crawler;
 
-class ItcParseService implements ParserSitesInterface
+class ItcParseService extends BaseParseService implements ParserSitesInterface
 {
     public function parse(string $link): array
     {
@@ -17,10 +17,10 @@ class ItcParseService implements ParserSitesInterface
         ];
 
         try {
-            $response = Http::withHeaders([
-                'User-Agent' => 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36',
-                'Accept-Language' => 'uk-UA,uk;q=0.9,en;q=0.8',
-            ])->get($link);
+
+            $headers = $this->getRandomHeaders($link);
+
+            $response = Http::withHeaders($headers)->get($link);
 
             if (!$response->successful()) {
                 return $data;
@@ -56,11 +56,7 @@ class ItcParseService implements ParserSitesInterface
             $path = parse_url($link, PHP_URL_PATH);
             $statsUrl = "https://stats.itc.ua/api/article?url={$path}";
 
-            $statsResponse = Http::withHeaders([
-                'Accept' => 'application/json, text/javascript, */*; q=0.01',
-                'Referer' => $link,
-                'User-Agent' => 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36',
-            ])->get($statsUrl);
+            $statsResponse = Http::withHeaders($headers)->get($statsUrl);
 
 
             if ($statsResponse->successful()) {
