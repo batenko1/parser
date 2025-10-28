@@ -4,9 +4,12 @@ namespace App\Jobs;
 
 use App\Models\Article;
 use App\Models\ArticleStat;
+use App\Services\ParserSites\BlikParseService;
 use App\Services\ParserSites\CensorParseService;
+use App\Services\ParserSites\DefenceUaParseService;
 use App\Services\ParserSites\FocusParseService;
 use App\Services\ParserSites\GlavredParseService;
+use App\Services\ParserSites\ItcParseService;
 use App\Services\ParserSites\KorrespondentParseService;
 use App\Services\ParserSites\ObozrevatelParseService;
 use App\Services\ParserSites\PravdaParseService;
@@ -14,8 +17,11 @@ use App\Services\ParserSites\RadiotrekParseService;
 use App\Services\ParserSites\RbcParseService;
 use App\Services\ParserSites\TsnParseService;
 use App\Services\ParserSites\Tv24ParseService;
+use App\Services\ParserSites\UkranewsParseService;
 use App\Services\ParserSites\UnianParseService;
+use App\Services\ParserSites\UnnParseService;
 use App\Services\ParserSites\VsvitiParseService;
+use App\Services\ParserSites\ZaxidParseService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -111,6 +117,24 @@ class UpdateArticleStatJob implements ShouldQueue
                 break;
             case 'Vsviti':
                 $service = app(VsvitiParseService::class);
+                break;
+            case 'Zaxid':
+                $service = app(ZaxidParseService::class);
+                break;
+            case 'Unn':
+                $service = app(UnnParseService::class);
+                break;
+            case 'Itc':
+                $service = app(ItcParseService::class);
+                break;
+            case 'Blik':
+                $service = app(BlikParseService::class);
+                break;
+            case 'Defence-ua':
+                $service = app(DefenceUaParseService::class);
+                break;
+            case 'Ukranews':
+                $service = app(UkranewsParseService::class);
                 break;
         }
 
