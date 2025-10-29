@@ -134,7 +134,42 @@
 
                         <tr id="details-{{ $idx }}" class="hidden bg-gray-50">
                             <td colspan="6" class="px-6 py-4">
-                                {!! $article->text !!}
+                                <h3 class="font-semibold text-gray-700 mb-2">Історія переглядів</h3>
+                                <ul class="space-y-1 text-sm text-gray-600">
+                                    @foreach($article->stats()->orderBy('id')->get() as $stat)
+                                        <li class="flex justify-between border-b pb-1">
+                                            <span>{{ $stat->created_at->format('d.m.Y H:i') }}</span>
+                                            <span class="font-semibold">{{ $stat->views }} / {{ $stat->views_speed ? round($stat->views_speed) : 0 }} в годину</span>
+                                            @if($stat->error)
+                                                <span>{{ $stat->error }}</span>
+                                            @endif
+                                        </li>
+                                    @endforeach
+                                    @if($article->stats->count() === 0)
+                                        <li class="text-gray-500">Немає даних</li>
+                                    @endif
+                                </ul>
+
+                                <br>
+
+                                <div style="margin-bottom: 10px;">
+                                    <b>Title</b> ({{ \Illuminate\Support\Str::length($article->meta_title) }} символов) -
+                                    {{ $article->meta_title }}
+                                </div>
+
+                                <hr>
+
+                                <div style="margin-bottom: 10px;">
+                                    <b>Description</b> ({{ \Illuminate\Support\Str::length($article->meta_description) }} символов) -
+                                    {{ $article->meta_description }}
+                                </div>
+
+                                <hr>
+
+                                <div>
+                                    <b>Text</b> ({{ preg_match_all('/[\p{L}\p{N}_]+/u', strip_tags($article->text)) }} слів) -
+                                    {!! $article->text !!}
+                                </div>
                             </td>
                         </tr>
                     @endforeach

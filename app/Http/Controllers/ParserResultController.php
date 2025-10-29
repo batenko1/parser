@@ -67,13 +67,14 @@ class ParserResultController extends Controller
 
                 if($fieldSort === 'speed'){
                     $query->addSelect([
-                        'last_views' => DB::table('article_stats')
-                            ->select('views_speed')
+                        'speed' => DB::table('article_stats')
+                            ->select('article_stats.views_speed')
+                            ->where('article_stats.views_speed', '>', 0)
                             ->whereColumn('article_stats.article_id', 'articles.id')
-                            ->orderByDesc('created_at')
+                            ->orderByDesc('article_stats.created_at')
                             ->limit(1)
                     ])
-                        ->orderBy('last_views', $typeSort);
+                        ->orderBy('speed', $typeSort);
                 }
 
             })
