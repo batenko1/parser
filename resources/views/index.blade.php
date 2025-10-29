@@ -260,5 +260,42 @@
         document.addEventListener("DOMContentLoaded", () => {
             if (localStorage.getItem(STORAGE_KEY) === "true") showContent();
         });
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const start = "{{ request('date_from') }}";
+            const end = "{{ request('date_to') }}";
+
+            $('#date-range').daterangepicker({
+                autoUpdateInput: false,
+                locale: {
+                    cancelLabel: 'Очистити',
+                    format: 'YYYY-MM-DD',
+                    applyLabel: 'Вибрати',
+                    customRangeLabel: 'Свої дати'
+                },
+                ranges: {
+                    'Сьогодні': [moment(), moment()],
+                    'Вчора': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                    'Останні 7 днів': [moment().subtract(6, 'days'), moment()],
+                    'Останні 30 днів': [moment().subtract(29, 'days'), moment()],
+                    'Цей місяць': [moment().startOf('month'), moment().endOf('month')],
+                    'Минулий місяць': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+                },
+                startDate: start ? moment(start) : moment().subtract(29, 'days'),
+                endDate: end ? moment(end) : moment()
+            }, function (startDate, endDate, label) {
+                $('#date-range').val(startDate.format('YYYY-MM-DD') + ' - ' + endDate.format('YYYY-MM-DD'));
+            });
+
+            if (start && end) {
+                $('#date-range').data('daterangepicker').setStartDate(start);
+                $('#date-range').data('daterangepicker').setEndDate(end);
+                $('#date-range').val(start + ' - ' + end);
+            }
+
+            $('#date-range').on('cancel.daterangepicker', function (ev, picker) {
+                $(this).val('');
+            });
+        });
     </script>
 @endsection
