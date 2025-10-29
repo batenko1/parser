@@ -66,15 +66,15 @@ class ParserResultController extends Controller
                 }
 
                 if($fieldSort === 'speed'){
+                    $subquery = DB::table('article_stats')
+                        ->select('views_speed')
+                        ->whereColumn('article_stats.article_id', 'articles.id')
+                        ->orderByDesc('article_stats.created_at')
+                        ->limit(1);
+
                     $query->addSelect([
-                        'speed' => DB::table('article_stats')
-                            ->select('article_stats.views_speed')
-                            ->where('article_stats.views_speed', '>', 0)
-                            ->whereColumn('article_stats.article_id', 'articles.id')
-                            ->orderByDesc('article_stats.created_at')
-                            ->limit(1)
-                    ])
-                        ->orderBy('speed', $typeSort);
+                        'last_speed' => $subquery
+                    ])->orderByRaw('(COALESCE((' . $subquery->toSql() . '), 0)) ' . $typeSort, $subquery->getBindings());
                 }
 
             })
@@ -82,6 +82,7 @@ class ParserResultController extends Controller
                 $query->orderBy('created_at', 'desc');
             })
             ->paginate(100);
+
 
         return view('index', [
             'articles' => $articles,
