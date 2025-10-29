@@ -24,7 +24,7 @@
                     <div class="col-span-2">
                         <label class="block text-sm font-medium text-gray-700 mb-1">Діапазон дат</label>
                         <input type="text" name="date_range" id="date-range"
-                               value="{{ request('date_from') && request('date_to') ? request('date_from') . ' - ' . request('date_to') : '' }}"
+                               value="{{ request('date_range') }}"
                                class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring focus:ring-indigo-200"
                                autocomplete="off">
                     </div>
