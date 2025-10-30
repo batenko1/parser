@@ -230,15 +230,22 @@
         });
 
         function toggleSort(column) {
-            const current = new URLSearchParams(window.location.search).get('sort');
+            const params = new URLSearchParams(window.location.search);
+            const current = params.get('sort');
             let newSort = '';
 
-            if (column === 'views')
-                newSort = current === 'views_asc' ? 'views_desc' : 'views_asc';
-            else if (column === 'speed')
-                newSort = current === 'speed_asc' ? 'speed_desc' : 'speed_asc';
+            if (column === 'views') {
+                if (current === 'views_asc') newSort = 'views_desc';
+                else if (current === 'views_desc') newSort = '';
+                else newSort = 'views_asc';
+            } else if (column === 'speed') {
+                if (current === 'speed_asc') newSort = 'speed_desc';
+                else if (current === 'speed_desc') newSort = '';
+                else newSort = 'speed_asc';
+            }
 
-            document.getElementById('sort').value = newSort;
+            const sortInput = document.getElementById('sort');
+            sortInput.value = newSort;
             document.getElementById('filter-form').submit();
         }
 
