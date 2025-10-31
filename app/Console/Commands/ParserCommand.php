@@ -45,6 +45,11 @@ class ParserCommand extends Command
         foreach ($sites as $site) {
             $this->info("Парсим сайт: {$site->name}");
 
+            if(in_array($site->name, ['Radiotrek', "RBC", 'Vsviti'])) {
+                continue;
+            }
+
+
             try {
 
                 try {
@@ -87,6 +92,7 @@ class ParserCommand extends Command
 
     private function getArticleStat($siteName, $link): array
     {
+
         $data = [
             'meta_title' => '',
             'meta_description' => '',
@@ -102,15 +108,15 @@ class ParserCommand extends Command
             case 'TSN';
                 $service = app(TsnParseService::class);
                 break;
-            case 'Radiotrek':
-                $service = app(RadiotrekParseService::class); //--
-                break;
+//            case 'Radiotrek':
+//                $service = app(RadiotrekParseService::class); //--
+//                break;
             case 'Glavred':
                 $service = app(GlavredParseService::class);
                 break;
-            case 'RBC':
-                $service = app(RbcParseService::class); //--
-                break;
+//            case 'RBC':
+//                $service = app(RbcParseService::class); //--
+//                break;
             case '24tv':
                 $service = app(Tv24ParseService::class);
                 break;
@@ -129,9 +135,9 @@ class ParserCommand extends Command
             case 'Pravda':
                 $service = app(PravdaParseService::class);
                 break;
-            case 'Vsviti':
-                $service = app(VsvitiParseService::class);
-                break;
+//            case 'Vsviti':
+//                $service = app(VsvitiParseService::class);
+//                break;
             case 'Zaxid':
                 $service = app(ZaxidParseService::class);
                 break;
