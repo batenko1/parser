@@ -8,7 +8,7 @@
         }
     @endphp
 
-    <div id="protected-content">
+    <div id="protected-content" style="display:none">
         <div class="container mx-auto px-4 py-6">
             <h1 class="text-2xl font-bold mb-6">Результати парсингу новин</h1>
 
@@ -124,11 +124,13 @@
                         <tr class="hover:bg-gray-50 cursor-pointer" onclick="toggleRow({{ $idx }})">
                             <td class="px-4 py-3 font-medium">{{ $article->created_at->format('d.m.Y H:i') }}</td>
                             <td class="px-4 py-3 font-medium">{{ $article->site->name }}</td>
-                            <td class="px-4 py-3">{{ $article->title }}</td>
+                            <td class="px-4 py-3">{{ html_entity_decode((string) $article->title, ENT_QUOTES | ENT_HTML5, 'UTF-8') }}</td>
                             <td class="px-4 py-3">{{ $article->stats->sortByDesc('id')->first()->views ?? 0 }}</td>
                             <td class="px-4 py-3">{{ round($article->stats->sortByDesc('id')->first()->views_speed ?? 0) }}</td>
                             <td class="px-4 py-3 text-blue-600">
-                                <a href="{{ $article->link }}" target="_blank" class="hover:underline">Перейти</a>
+                                <a href="{{ $article->link }}"
+                                   onclick="event.stopPropagation()"
+                                   target="_blank" class="hover:underline">Перейти</a>
                             </td>
                         </tr>
 
@@ -180,6 +182,20 @@
             <div class="mt-6">
                 {{ $articles->appends(request()->query())->links('pagination::tailwind') }}
             </div>
+        </div>
+    </div>
+
+    <div id="password-screen" class="flex items-center justify-center min-h-screen bg-gray-100">
+        <div class="bg-white shadow-lg rounded-lg p-6 w-80 text-center">
+            <h2 class="text-lg font-bold mb-4">🔒 Введіть пароль</h2>
+            <input type="password" id="page-password"
+                   class="w-full border border-gray-300 rounded px-3 py-2 mb-4 focus:ring focus:ring-indigo-200"
+                   placeholder="Пароль">
+            <button onclick="checkPassword()"
+                    class="w-full bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700">
+                Увійти
+            </button>
+            <p id="error-msg" class="text-red-500 text-sm mt-2 hidden">Невірний пароль</p>
         </div>
     </div>
 

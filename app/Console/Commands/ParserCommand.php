@@ -13,14 +13,11 @@ use App\Services\ParserSites\ItcParseService;
 use App\Services\ParserSites\KorrespondentParseService;
 use App\Services\ParserSites\ObozrevatelParseService;
 use App\Services\ParserSites\PravdaParseService;
-use App\Services\ParserSites\RadiotrekParseService;
-use App\Services\ParserSites\RbcParseService;
 use App\Services\ParserSites\TsnParseService;
 use App\Services\ParserSites\Tv24ParseService;
 use App\Services\ParserSites\UkranewsParseService;
 use App\Services\ParserSites\UnianParseService;
 use App\Services\ParserSites\UnnParseService;
-use App\Services\ParserSites\VsvitiParseService;
 use App\Services\ParserSites\ZaxidParseService;
 use Exception;
 use Illuminate\Console\Command;
@@ -39,7 +36,7 @@ class ParserCommand extends Command
             ->when($type, function ($query, $type) {
                 $query->where('name', $type);
             })
-//            ->where('name', 'Ukranews')
+//            ->where('name', 'Zaxid')
             ->get();
 
         foreach ($sites as $site) {
