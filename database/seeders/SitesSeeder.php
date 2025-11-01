@@ -64,7 +64,7 @@ class SitesSeeder extends Seeder
             ],
             [
                 'name' => 'Zaxid',
-                'link' => 'https://zaxid.net/rss'
+                'link' => 'https://zaxid.net/rss/all.xml'
             ],
             [
                 'name' => 'Unn',

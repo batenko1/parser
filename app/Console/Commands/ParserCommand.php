@@ -80,10 +80,6 @@ class ParserCommand extends Command
                     $data = $this->getArticleStat($site->name, $link);
 
                     ArticleService::storeData($title, $link, $site->id, $data);
-
-                    if($type) {
-                        dd($data, $title, $link);
-                    }
                 }
             } catch (Exception $e) {
                 $this->error("Error parse {$site->name}: " . $e->getMessage());
