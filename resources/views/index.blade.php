@@ -115,10 +115,9 @@
                             </div>
                         </th>
 
-                        <th>Вогник</th>
-                        <th>Ракета</th>
+                        <th class="px-4 py-3 select-none">Ракета</th>
+                        <th class="px-4 py-3 select-none">Вогник</th>
 
-                        <th class="px-4 py-3">Посилання</th>
                     </tr>
                     </thead>
 
@@ -127,9 +126,19 @@
                         <tr class="hover:bg-gray-50 cursor-pointer" onclick="toggleRow({{ $idx }})">
                             <td class="px-4 py-3 font-medium">{{ $article->created_at->format('d.m.Y H:i') }}</td>
                             <td class="px-4 py-3 font-medium">{{ $article->site->name }}</td>
-                            <td class="px-4 py-3">{{ html_entity_decode((string) $article->title, ENT_QUOTES | ENT_HTML5, 'UTF-8') }}</td>
+                            <td class="px-4 py-3">
+                                <a href="{{ $article->link }}"
+                                   onclick="event.stopPropagation()"
+                                   target="_blank" class="hover:underline">{{ html_entity_decode((string) $article->title, ENT_QUOTES | ENT_HTML5, 'UTF-8') }}
+                                </a>
+                                </td>
                             <td class="px-4 py-3">{{ $article->stats->sortByDesc('id')->first()->views ?? 0 }}</td>
                             <td class="px-4 py-3">{{ round($article->stats->sortByDesc('id')->first()->views_speed ?? 0) }}</td>
+                            <td class="px-4 py-3">
+                                @if($article->is_very_fast)
+                                    🚀
+                                @endif
+                            </td>
                             <td class="px-4 py-3">
 
                                 @if($article->speed_x > 0)
@@ -139,20 +148,10 @@
                                 @endif
 
                             </td>
-                            <td class="px-4 py-3">
-                                @if($article->is_very_fast)
-                                    🚀
-                                @endif
-                            </td>
-                            <td class="px-4 py-3 text-blue-600">
-                                <a href="{{ $article->link }}"
-                                   onclick="event.stopPropagation()"
-                                   target="_blank" class="hover:underline">Перейти</a>
-                            </td>
                         </tr>
 
                         <tr id="details-{{ $idx }}" class="hidden bg-gray-50">
-                            <td colspan="6" class="px-6 py-4">
+                            <td colspan="7" class="px-6 py-4">
                                 <h3 class="font-semibold text-gray-700 mb-2">Історія переглядів</h3>
                                 <ul class="space-y-1 text-sm text-gray-600">
                                     @foreach($article->stats()->orderBy('id')->get() as $stat)
