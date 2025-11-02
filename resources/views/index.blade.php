@@ -20,13 +20,37 @@
                     @endforeach
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
                     <div class="col-span-2">
                         <label class="block text-sm font-medium text-gray-700 mb-1">Діапазон дат</label>
                         <input type="text" name="date_range" id="date-range"
                                value="{{ request('date_range') }}"
                                class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring focus:ring-indigo-200"
                                autocomplete="off">
+                    </div>
+
+                    <div class="relative top-[-10px]">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Фільтри</label>
+                        <div class="flex gap-2">
+                            @php
+                                $selectedFilters = (array) request('filters', []);
+                            @endphp
+
+
+                            <label class="inline-flex items-center">
+                                <input type="checkbox" name="filters[]" value="flame"
+                                       {{ in_array('flame', $selectedFilters) ? 'checked' : '' }}
+                                       class="text-indigo-600 border-gray-300 rounded focus:ring focus:ring-indigo-200">
+                                <span class="ml-2">Вогник</span>
+                            </label>
+
+                            <label class="inline-flex items-center">
+                                <input type="checkbox" name="filters[]" value="rocket"
+                                       {{ in_array('rocket', $selectedFilters) ? 'checked' : '' }}
+                                       class="text-indigo-600 border-gray-300 rounded focus:ring focus:ring-indigo-200">
+                                <span class="ml-2">Ракета</span>
+                            </label>
+                        </div>
                     </div>
 
                     <div>
@@ -37,6 +61,8 @@
                     </div>
                 </div>
             </form>
+
+
 
             <div class="overflow-x-auto bg-white shadow-md rounded-lg relative">
                 <table class="min-w-full text-sm text-left text-gray-600">
