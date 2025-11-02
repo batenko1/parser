@@ -15,7 +15,8 @@ class ParserResultController extends Controller
         $sortFilter = $request->get('sort');
         $dateRange = $request->get('date_range');
 
-        $filters = $request->get('filters');
+        $filterRocket = $request->get('filter_rocket');
+        $filterFire = $request->get('filter_fire');
 
         $fieldSort = 'views';
         $typeSort = 'asc';
@@ -54,10 +55,10 @@ class ParserResultController extends Controller
             ->when($sitesFilter, function ($query, $sitesFilter) {
                 $query->whereIn('site_id', $sitesFilter);
             })
-            ->when(is_array($filters) && in_array('flame', $filters), function ($query, $filters) {
+            ->when($filterFire, function ($query) {
                 $query->where('speed_x', '>', 0);
             })
-            ->when(is_array($filters) && in_array('rocket', $filters), function ($query, $filters) {
+            ->when($filterRocket, function ($query) {
                 $query->where('is_very_fast', true);
             })
             ->when($sortFilter, function ($query) use ($fieldSort, $typeSort) {

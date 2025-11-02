@@ -21,36 +21,12 @@
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
-                    <div class="col-span-2">
+                    <div class="col-span-3">
                         <label class="block text-sm font-medium text-gray-700 mb-1">Діапазон дат</label>
                         <input type="text" name="date_range" id="date-range"
                                value="{{ request('date_range') }}"
                                class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring focus:ring-indigo-200"
                                autocomplete="off">
-                    </div>
-
-                    <div class="relative top-[-10px]">
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Фільтри</label>
-                        <div class="flex gap-2">
-                            @php
-                                $selectedFilters = (array) request('filters', []);
-                            @endphp
-
-
-                            <label class="inline-flex items-center">
-                                <input type="checkbox" name="filters[]" value="flame"
-                                       {{ in_array('flame', $selectedFilters) ? 'checked' : '' }}
-                                       class="text-indigo-600 border-gray-300 rounded focus:ring focus:ring-indigo-200">
-                                <span class="ml-2">Вогник</span>
-                            </label>
-
-                            <label class="inline-flex items-center">
-                                <input type="checkbox" name="filters[]" value="rocket"
-                                       {{ in_array('rocket', $selectedFilters) ? 'checked' : '' }}
-                                       class="text-indigo-600 border-gray-300 rounded focus:ring focus:ring-indigo-200">
-                                <span class="ml-2">Ракета</span>
-                            </label>
-                        </div>
                     </div>
 
                     <div>
@@ -60,6 +36,13 @@
                         </button>
                     </div>
                 </div>
+
+                @if(request('filter_rocket'))
+                    <input type="hidden" name="filter_rocket" value="1">
+                @endif
+                @if(request('filter_fire'))
+                    <input type="hidden" name="filter_fire" value="1">
+                @endif
             </form>
 
 
@@ -141,8 +124,24 @@
                             </div>
                         </th>
 
-                        <th class="px-4 py-3 select-none">Ракета</th>
-                        <th class="px-4 py-3 select-none">Вогник</th>
+                        <th class="px-4 py-3 select-none text-center">
+                            🚀
+                            <input
+                                type="checkbox"
+                                id="filter-rocket"
+                                {{ request('filter_rocket') ? 'checked' : '' }}
+                                class="ml-1 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                            >
+                        </th>
+                        <th class="px-4 py-3 select-none text-center">
+                            🔥
+                            <input
+                                type="checkbox"
+                                id="filter-fire"
+                                {{ request('filter_fire') ? 'checked' : '' }}
+                                class="ml-1 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                            >
+                        </th>
 
                     </tr>
                     </thead>
@@ -363,6 +362,30 @@
             $('#date-range').on('cancel.daterangepicker', function (ev, picker) {
                 $(this).val('');
             });
+        });
+
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const form = document.getElementById('filter-form');
+
+            function toggleHiddenInput(name, checked) {
+                const existing = form.querySelector(`input[name="${name}"]`);
+                if (existing) existing.remove();
+                if (checked) {
+                    const input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.name = name;
+                    input.value = '1';
+                    form.appendChild(input);
+                }
+                form.submit();
+            }
+
+            const rocket = document.getElementById('filter-rocket');
+            const fire = document.getElementById('filter-fire');
+
+            rocket.addEventListener('change', () => toggleHiddenInput('filter_rocket', rocket.checked));
+            fire.addEventListener('change', () => toggleHiddenInput('filter_fire', fire.checked));
         });
     </script>
 @endsection
