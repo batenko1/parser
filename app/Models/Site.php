@@ -8,6 +8,8 @@ class Site extends Model
 {
     protected $fillable = [
         'name',
-        'link'
+        'link',
+        'speed_x',
+        'very_fast_value'
     ];
 }

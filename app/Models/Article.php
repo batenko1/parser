@@ -13,6 +13,8 @@ class Article extends Model
         'meta_title',
         'meta_description',
         'text',
+        'speed_x',
+        'is_very_fast',
     ];
 
     public function stats()

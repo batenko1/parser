@@ -9,7 +9,7 @@
     @endphp
 
     <div id="protected-content" style="display:none">
-        <div class="container mx-auto px-4 py-6">
+        <div class="container mx-auto py-6">
             <h1 class="text-2xl font-bold mb-6">Результати парсингу новин</h1>
 
             <form method="GET" action="{{ route('index') }}" class="mb-6" id="filter-form">
@@ -115,6 +115,9 @@
                             </div>
                         </th>
 
+                        <th>Вогник</th>
+                        <th>Ракета</th>
+
                         <th class="px-4 py-3">Посилання</th>
                     </tr>
                     </thead>
@@ -127,6 +130,20 @@
                             <td class="px-4 py-3">{{ html_entity_decode((string) $article->title, ENT_QUOTES | ENT_HTML5, 'UTF-8') }}</td>
                             <td class="px-4 py-3">{{ $article->stats->sortByDesc('id')->first()->views ?? 0 }}</td>
                             <td class="px-4 py-3">{{ round($article->stats->sortByDesc('id')->first()->views_speed ?? 0) }}</td>
+                            <td class="px-4 py-3">
+
+                                @if($article->speed_x > 0)
+                                    @for($i=0; $i <= $article->speed_x; $i++)
+                                        🔥
+                                    @endfor
+                                @endif
+
+                            </td>
+                            <td class="px-4 py-3">
+                                @if($article->is_very_fast)
+                                    🚀
+                                @endif
+                            </td>
                             <td class="px-4 py-3 text-blue-600">
                                 <a href="{{ $article->link }}"
                                    onclick="event.stopPropagation()"
