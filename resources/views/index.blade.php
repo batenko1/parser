@@ -169,7 +169,7 @@
                             <td class="px-4 py-3">
 
                                 @if($article->speed_x > 0)
-                                    @for($i=0; $i <= $article->speed_x; $i++)
+                                    @for($i = 0; $i < min($article->speed_x, 3); $i++)
                                         🔥
                                     @endfor
                                 @endif
