@@ -44,9 +44,8 @@ class UpdateArticleStatJob implements ShouldQueue
         $article = Article::query()->find($this->articleId);
         if (!$article) return;
 
-        $views = $data['views'] ?? 0;
-
         $data = $this->getArticleStat($article->site->name, $article->link);
+        $views = $data['views'] ?? 0;
         $site = $article->site;
 
         $countStats = ArticleStat::query()->where('article_id', $article->id)->count();
@@ -57,9 +56,7 @@ class UpdateArticleStatJob implements ShouldQueue
 
         if($countStats == 2 && $site->speed_x && $views > $site->speed_x) {
             $times = round($views / $site->speed_x);
-
             $article->speed_x = $times;
-
         }
 
         $article->save();
