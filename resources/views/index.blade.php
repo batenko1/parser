@@ -127,7 +127,9 @@
                             <td class="px-4 py-3 font-medium">{{ $article->created_at->format('d.m.Y H:i') }}</td>
                             <td class="px-4 py-3 font-medium">{{ $article->site->name }}</td>
                             <td class="px-4 py-3">
-                                <a href="{{ $article->link }}"
+                                <a
+                                    rel="nofollow noreferrer"
+                                    href="{{ $article->link }}"
                                    onclick="event.stopPropagation()"
                                    target="_blank" class="hover:underline">{{ html_entity_decode((string) $article->title, ENT_QUOTES | ENT_HTML5, 'UTF-8') }}
                                 </a>
