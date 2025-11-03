@@ -18,7 +18,7 @@
             Parser Dashboard
         </a>
         <div class="flex space-x-4">
-            <a href="{{ route('index') }}" class="hover:text-gray-200">Результаты</a>
+            <a href="{{ route('index') }}" class="hover:text-gray-200">Результати</a>
             <a href="{{ route('sites') }}" class="hover:text-gray-200">Сайти</a>
         </div>
     </div>
