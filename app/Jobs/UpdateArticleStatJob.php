@@ -50,17 +50,6 @@ class UpdateArticleStatJob implements ShouldQueue
 
         $countStats = ArticleStat::query()->where('article_id', $article->id)->count();
 
-        if($countStats == 1 && $site->is_very_fast && $views > $site->very_fast_value) {
-            $article->is_very_fast = true;
-        }
-
-        if($countStats == 2 && $site->speed_x && $views > $site->speed_x) {
-            $times = round($views / $site->speed_x);
-            $article->speed_x = $times;
-        }
-
-        $article->save();
-
         $lastStat = ArticleStat::query()
             ->where('article_id', $article->id)
             ->latest('id')
@@ -76,6 +65,17 @@ class UpdateArticleStatJob implements ShouldQueue
                 $viewsSpeed = $hoursPassed > 0 ? $viewsDiff / $hoursPassed : null;
             }
         }
+
+        if($countStats == 1 && $site->is_very_fast && $lastStat->views_speed > $site->very_fast_value) {
+            $article->is_very_fast = true;
+        }
+
+        if($countStats == 2 && $site->speed_x && $lastStat->views_speed > $site->speed_x) {
+            $times = round($lastStat->views_speed / $site->speed_x);
+            $article->speed_x = $times;
+        }
+
+        $article->save();
 
         ArticleStat::query()->create([
             'article_id' => $article->id,
