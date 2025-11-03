@@ -70,9 +70,16 @@ class UpdateArticleStatJob implements ShouldQueue
             $article->is_very_fast = true;
         }
 
-        if($countStats == 2 && $site->speed_x && $lastStat->views_speed > $site->speed_x) {
+        if($countStats >= 2 && $site->speed_x && $lastStat->views_speed > $site->speed_x) {
             $times = round($lastStat->views_speed / $site->speed_x);
-            $article->speed_x = $times;
+
+            if(!$article->speed_x) {
+                $article->speed_x = $times;
+            }
+
+            if($article->speed_x < $times) {
+                $article->speed_x = $times;
+            }
         }
 
         $article->save();
