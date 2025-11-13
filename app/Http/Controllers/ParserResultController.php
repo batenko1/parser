@@ -11,12 +11,18 @@ class ParserResultController extends Controller
 {
     public function index(Request $request)
     {
+        $user = auth()->user();
+
+        if(!$user) {
+            return redirect()->route('login');
+        }
+
         $sitesFilter = $request->get('sites');
         $sortFilter = $request->get('sort');
         $dateRange = $request->get('date_range');
 
         $filterRocket = $request->get('filter_rocket');
-        $filterFire = $request->get('filter_fire');
+        $filterFire = $request->get('filter_fire') ?? ($user && $user->role_id == 2) ? 1 : false;
 
         $fieldSort = 'views';
         $typeSort = 'asc';

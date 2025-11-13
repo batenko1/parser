@@ -8,7 +8,7 @@
         }
     @endphp
 
-    <div id="protected-content" style="display:none">
+    <div id="protected-content">
         <div class="container mx-auto py-6">
             <h1 class="text-2xl font-bold mb-6">Результати парсингу новин</h1>
 
@@ -111,7 +111,9 @@
                             </div>
                         </th>
 
-                        <th class="px-4 py-3 cursor-pointer select-none" onclick="toggleSort('speed')">
+                        @if(auth()->user()->role_id == 1)
+                        <th class="px-4 py-3 cursor-pointer select-none"
+                            onclick="toggleSort('speed')">
                             <div class="flex items-center gap-1">
                                 <span>Швидкість за годину</span>
                                 @if(request('sort') === 'speed_asc')
@@ -123,10 +125,12 @@
                                 @endif
                             </div>
                         </th>
+                        @endif
 
                         <th class="px-4 py-3 select-none text-center">
                             🚀
                             <input
+                                @if(auth()->user()->role_id == 2) disabled @endif
                                 type="checkbox"
                                 id="filter-rocket"
                                 {{ request('filter_rocket') ? 'checked' : '' }}
@@ -136,6 +140,7 @@
                         <th class="px-4 py-3 select-none text-center">
                             🔥
                             <input
+                                @if(auth()->user()->role_id == 2) checked disabled @endif
                                 type="checkbox"
                                 id="filter-fire"
                                 {{ request('filter_fire') ? 'checked' : '' }}
@@ -160,7 +165,9 @@
                                 </a>
                                 </td>
                             <td class="px-4 py-3">{{ $article->stats->sortByDesc('id')->first()->views ?? 0 }}</td>
+                            @if(auth()->user()->role_id == 1)
                             <td class="px-4 py-3">{{ round($article->stats->sortByDesc('id')->first()->views_speed ?? 0) }}</td>
+                            @endif
                             <td class="px-4 py-3">
                                 @if($article->is_very_fast)
                                     🚀
@@ -179,6 +186,7 @@
 
                         <tr id="details-{{ $idx }}" class="hidden bg-gray-50">
                             <td colspan="7" class="px-6 py-4">
+                                @if(auth()->user()->role_id == 1)
                                 <h3 class="font-semibold text-gray-700 mb-2">Історія переглядів</h3>
                                 <ul class="space-y-1 text-sm text-gray-600">
                                     @foreach($article->stats()->orderBy('id')->get() as $stat)
@@ -194,6 +202,7 @@
                                         <li class="text-gray-500">Немає даних</li>
                                     @endif
                                 </ul>
+                                @endif
 
                                 <br>
 
@@ -209,12 +218,15 @@
                                     {{ $article->meta_description }}
                                 </div>
 
-                                <hr>
 
-                                <div>
-                                    <b>Text</b> ({{ preg_match_all('/[\p{L}\p{N}_]+/u', strip_tags($article->text)) }} слів) -
-                                    {!! $article->text !!}
-                                </div>
+                                @if(auth()->user()->role_id == 1)
+                                    <hr>
+
+                                    <div>
+                                        <b>Text</b> ({{ preg_match_all('/[\p{L}\p{N}_]+/u', strip_tags($article->text)) }} слів) -
+                                        {!! $article->text !!}
+                                    </div>
+                                @endif
                             </td>
                         </tr>
                     @endforeach
@@ -228,19 +240,19 @@
         </div>
     </div>
 
-    <div id="password-screen" class="flex items-center justify-center min-h-screen bg-gray-100">
-        <div class="bg-white shadow-lg rounded-lg p-6 w-80 text-center">
-            <h2 class="text-lg font-bold mb-4">🔒 Введіть пароль</h2>
-            <input type="password" id="page-password"
-                   class="w-full border border-gray-300 rounded px-3 py-2 mb-4 focus:ring focus:ring-indigo-200"
-                   placeholder="Пароль">
-            <button onclick="checkPassword()"
-                    class="w-full bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700">
-                Увійти
-            </button>
-            <p id="error-msg" class="text-red-500 text-sm mt-2 hidden">Невірний пароль</p>
-        </div>
-    </div>
+{{--    <div id="password-screen" class="flex items-center justify-center min-h-screen bg-gray-100">--}}
+{{--        <div class="bg-white shadow-lg rounded-lg p-6 w-80 text-center">--}}
+{{--            <h2 class="text-lg font-bold mb-4">🔒 Введіть пароль</h2>--}}
+{{--            <input type="password" id="page-password"--}}
+{{--                   class="w-full border border-gray-300 rounded px-3 py-2 mb-4 focus:ring focus:ring-indigo-200"--}}
+{{--                   placeholder="Пароль">--}}
+{{--            <button onclick="checkPassword()"--}}
+{{--                    class="w-full bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700">--}}
+{{--                Увійти--}}
+{{--            </button>--}}
+{{--            <p id="error-msg" class="text-red-500 text-sm mt-2 hidden">Невірний пароль</p>--}}
+{{--        </div>--}}
+{{--    </div>--}}
 
     <script>
         function toggleRow(idx) {
