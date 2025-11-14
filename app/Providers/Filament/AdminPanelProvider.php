@@ -31,6 +31,8 @@ class AdminPanelProvider extends PanelProvider
         Filament::serving(function () {
             $user = auth()->user();
 
+            dd($user);
+
             if ($user && $user->role_id != 1) {
                 throw new HttpResponseException(
                     redirect('/')
