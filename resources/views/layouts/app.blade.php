@@ -19,6 +19,11 @@
         </a>
         <div class="flex space-x-4">
             <a href="{{ route('index') }}" class="hover:text-gray-200">Результати</a>
+            @if(auth()->check())
+                <a href="{{ route('logout') }}" class="hover:text-gray-200">Вийти</a>
+            @else
+                <a href="{{ route('login') }}" class="hover:text-gray-200">Вхід</a>
+            @endif
         </div>
     </div>
 </nav>

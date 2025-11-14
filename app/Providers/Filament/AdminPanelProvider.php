@@ -2,7 +2,9 @@
 
 namespace App\Providers\Filament;
 
+use App\Http\Middleware\RedirectIfNotFilamentAdmin;
 use App\Models\User;
+use Filament\Facades\Filament;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -16,13 +18,27 @@ use Filament\Widgets\FilamentInfoWidget;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
+use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 
 class AdminPanelProvider extends PanelProvider
 {
+
+    public function boot(): void
+    {
+        Filament::serving(function () {
+            $user = auth()->user();
+
+            if ($user && $user->role_id != 1) {
+                throw new HttpResponseException(
+                    redirect('/')
+                );
+            }
+
+        });
+    }
     public function panel(Panel $panel): Panel
     {
         return $panel
@@ -53,19 +69,6 @@ class AdminPanelProvider extends PanelProvider
                 SubstituteBindings::class,
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
-            ])
-            ->authMiddleware([
-                Authenticate::class,
-
-                function ($request, $next) {
-                    $user = auth()->user();
-
-                    if (! $user || $user->role_id != 1) {
-                        abort(403, 'Error');
-                    }
-
-                    return $next($request);
-                },
             ]);
     }
 }
