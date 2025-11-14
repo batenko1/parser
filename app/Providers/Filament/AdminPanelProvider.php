@@ -30,19 +30,6 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login()
-            ->authenticateUsing(function ($request) {
-                $user = User::query()->where('email', $request->email)->first();
-
-                if (! $user || ! Hash::check($request->password, $user->password)) {
-                    return null;
-                }
-
-                if (! $user->role_id == 1) {
-                    return null;
-                }
-
-                return $user;
-            })
             ->colors([
                 'primary' => Color::Amber,
             ])
@@ -69,6 +56,16 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
+
+                function ($request, $next) {
+                    $user = auth()->user();
+
+                    if (! $user || $user->role_id != 1) {
+                        abort(403, 'Error');
+                    }
+
+                    return $next($request);
+                },
             ]);
     }
 }
