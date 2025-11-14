@@ -5,13 +5,15 @@ services:
             - ./:/var/www
             - ./_docker/nginx/conf.d/nginx.conf:/etc/nginx/nginx.conf
             - ./storage/app/public:/var/www/storage/app/public
+            - ./_docker/nginx/ssl:/etc/nginx/ssl
         ports:
-            - "${NGINX_PORT}:80"
+            - "443:443"
         environment:
-            - NGINX_PORT=${NGINX_PORT}
+            - NGINX_PORT=443
         depends_on:
             - app
         container_name: nginx
+
 
     app:
         build:
