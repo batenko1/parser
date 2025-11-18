@@ -42,7 +42,6 @@ class ParserCommand extends Command
             ->when($type, function ($query, $type) {
                 $query->where('name', $type);
             })
-            ->where('name', 'Nv')
             ->get();
 
         foreach ($sites as $site) {
@@ -93,7 +92,6 @@ class ParserCommand extends Command
                     $link = (string)$item->link;
 
                     $data = $this->getArticleStat($site->name, $link);
-                    dd($data);
 
                     ArticleService::storeData($title, $link, $site->id, $data);
                 }
