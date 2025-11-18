@@ -50,8 +50,10 @@ class DonPatriotParseService implements ParserSitesInterface
         if ($viewsNode->count()) {
             $viewsText = trim($viewsNode->text());
 
-            if (preg_match('/\d+/', $viewsText, $m)) {
-                $data['views'] = (int)$m[0];
+            $clean = preg_replace('/\D+/', '', $viewsText);
+
+            if ($clean !== '') {
+                $data['views'] = (int)$clean;
             }
         }
 
