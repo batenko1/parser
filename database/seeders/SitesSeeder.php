@@ -85,6 +85,30 @@ class SitesSeeder extends Seeder
             [
                 'name' => 'Ukranews',
                 'link' => 'https://ukranews.com/rss/all_uk.xml'
+            ],
+            [
+                'name' => 'Mezha',
+                'link' => 'https://mezha.ua/feed'
+            ],
+            [
+                'name' => 'Epravda',
+                'link' => 'https://epravda.com.ua/rss/'
+            ],
+            [
+                'name' => 'Nv',
+                'link' => 'https://nv.ua/rss/all.xml'
+            ],
+            [
+                'name' => 'Donpatriot',
+                'link' => 'https://donpatriot.news/rss'
+            ],
+            [
+                'name' => 'NewsFinance',
+                'link' => 'https://news.finance.ua/ua/rss'
+            ],
+            [
+                'name' => "Pmg",
+                'link' => 'https://pmg.ua/rss/news.rss'
             ]
         ];
 

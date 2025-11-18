@@ -7,11 +7,17 @@ use App\Services\ArticleService;
 use App\Services\ParserSites\BlikParseService;
 use App\Services\ParserSites\CensorParseService;
 use App\Services\ParserSites\DefenceUaParseService;
+use App\Services\ParserSites\DonPatriotParseService;
+use App\Services\ParserSites\EpravdaParseService;
 use App\Services\ParserSites\FocusParseService;
 use App\Services\ParserSites\GlavredParseService;
 use App\Services\ParserSites\ItcParseService;
 use App\Services\ParserSites\KorrespondentParseService;
+use App\Services\ParserSites\MezhaParseService;
+use App\Services\ParserSites\NewsFinanceParseService;
+use App\Services\ParserSites\NvParseService;
 use App\Services\ParserSites\ObozrevatelParseService;
+use App\Services\ParserSites\PmgParseService;
 use App\Services\ParserSites\PravdaParseService;
 use App\Services\ParserSites\TsnParseService;
 use App\Services\ParserSites\Tv24ParseService;
@@ -36,13 +42,13 @@ class ParserCommand extends Command
             ->when($type, function ($query, $type) {
                 $query->where('name', $type);
             })
-//            ->where('name', 'Zaxid')
+            ->where('name', 'Nv')
             ->get();
 
         foreach ($sites as $site) {
             $this->info("Парсим сайт: {$site->name}");
 
-            if(in_array($site->name, ['Radiotrek', "RBC", 'Vsviti'])) {
+            if (in_array($site->name, ['Radiotrek', "RBC", 'Vsviti'])) {
                 continue;
             }
 
@@ -67,7 +73,16 @@ class ParserCommand extends Command
                     continue;
                 }
 
-                $xml = new \SimpleXMLElement($xmlData);
+                if($site->name === 'Donpatriot') {
+                    $xml = simplexml_load_string(
+                        $xmlData,
+                        'SimpleXMLElement',
+                        LIBXML_NOCDATA | LIBXML_NSCLEAN | LIBXML_NOERROR | LIBXML_NOWARNING
+                    );
+                }
+                else {
+                    $xml = new \SimpleXMLElement($xmlData);
+                }
 
                 $items = $xml->xpath('//channel/item');
 
@@ -78,6 +93,7 @@ class ParserCommand extends Command
                     $link = (string)$item->link;
 
                     $data = $this->getArticleStat($site->name, $link);
+                    dd($data);
 
                     ArticleService::storeData($title, $link, $site->id, $data);
                 }
@@ -152,6 +168,24 @@ class ParserCommand extends Command
                 break;
             case 'Ukranews':
                 $service = app(UkranewsParseService::class);
+                break;
+            case 'Mezha':
+                $service = app(MezhaParseService::class);
+                break;
+            case 'Epravda':
+                $service = app(EpravdaParseService::class);
+                break;
+            case 'Nv':
+                $service = app(NvParseService::class);
+                break;
+            case 'Donpatriot':
+                $service = app(DonpatriotParseService::class);
+                break;
+            case 'NewsFinance':
+                $service = app(NewsFinanceParseService::class);
+                break;
+            case 'Pmg':
+                $service = app(PmgParseService::class);
                 break;
         }
 

@@ -7,11 +7,17 @@ use App\Models\ArticleStat;
 use App\Services\ParserSites\BlikParseService;
 use App\Services\ParserSites\CensorParseService;
 use App\Services\ParserSites\DefenceUaParseService;
+use App\Services\ParserSites\DonPatriotParseService;
+use App\Services\ParserSites\EpravdaParseService;
 use App\Services\ParserSites\FocusParseService;
 use App\Services\ParserSites\GlavredParseService;
 use App\Services\ParserSites\ItcParseService;
 use App\Services\ParserSites\KorrespondentParseService;
+use App\Services\ParserSites\MezhaParseService;
+use App\Services\ParserSites\NewsFinanceParseService;
+use App\Services\ParserSites\NvParseService;
 use App\Services\ParserSites\ObozrevatelParseService;
+use App\Services\ParserSites\PmgParseService;
 use App\Services\ParserSites\PravdaParseService;
 use App\Services\ParserSites\RadiotrekParseService;
 use App\Services\ParserSites\RbcParseService;
@@ -164,6 +170,24 @@ class UpdateArticleStatJob implements ShouldQueue
                 break;
             case 'Ukranews':
                 $service = app(UkranewsParseService::class);
+                break;
+            case 'Mezha':
+                $service = app(MezhaParseService::class);
+                break;
+            case 'Epravda':
+                $service = app(EpravdaParseService::class);
+                break;
+            case 'Nv':
+                $service = app(NvParseService::class);
+                break;
+            case 'Donpatriot':
+                $service = app(DonpatriotParseService::class);
+                break;
+            case 'NewsFinance':
+                $service = app(NewsFinanceParseService::class);
+                break;
+            case 'Pmg':
+                $service = app(PmgParseService::class);
                 break;
         }
 
