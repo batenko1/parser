@@ -13,7 +13,7 @@ class RecalculateStatsCommand extends Command
     public function handle()
     {
         Article::query()
-            ->with(['stats' => fn($q) => $q->orderBy('created_at')])
+            ->with(['stats' => fn($q) => $q->where('views', '>', 0)->orderBy('created_at')])
             ->chunk(200, function ($articles) {
                 foreach ($articles as $article) {
                     $this->recalculateArticle($article);
