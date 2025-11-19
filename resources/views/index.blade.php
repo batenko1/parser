@@ -194,7 +194,7 @@
                                             <span>{{ $stat->created_at->format('d.m.Y H:i') }}</span>
                                             <span class="flex font-semibold">
                                                  @if($stat->error)
-                                                    <span>{{ $stat->error }}</span>
+                                                    <span>{{ $stat->error }}</span>&nbsp;
                                                 @endif
                                                 {{ $stat->views }} / {{ $stat->views_speed ? round($stat->views_speed) : 0 }} в годину</span>
                                         </li>
