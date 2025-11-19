@@ -4,6 +4,7 @@ namespace App\Services\ParserSites;
 
 use Illuminate\Support\Facades\Http;
 use Symfony\Component\DomCrawler\Crawler;
+use Throwable;
 
 class NewsFinanceParseService implements ParserSitesInterface
 {
@@ -46,8 +47,9 @@ class NewsFinanceParseService implements ParserSitesInterface
             }
 
             $viewsNode = $crawler->filter('.MuiTypography-caption3');
-            if ($viewsNode->count()) {
-                $viewsText = trim($viewsNode->text());
+
+            if ($viewsNode->count() > 1) {
+                $viewsText = trim($viewsNode->eq(1)->text());
                 $data['views'] = (int) preg_replace('/[^\d]/', '', $viewsText);
             }
 
@@ -58,7 +60,7 @@ class NewsFinanceParseService implements ParserSitesInterface
                 );
             }
 
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             $data['error'] = $e->getMessage();
         }
 

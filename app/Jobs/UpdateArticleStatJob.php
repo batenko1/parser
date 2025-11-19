@@ -50,17 +50,21 @@ class UpdateArticleStatJob implements ShouldQueue
         $article = Article::query()->find($this->articleId);
         if (!$article) return;
 
-        $data = $this->getArticleStat($article->site->name, $article->link);
-        $views = $data['views'] ?? 0;
-        $site = $article->site;
-
-        $countStats = ArticleStat::query()->where('article_id', $article->id)->count();
-
         $lastStat = ArticleStat::query()
             ->where('article_id', $article->id)
             ->latest('id')
             ->first();
 
+        $data = $this->getArticleStat($article->site->name, $article->link);
+        $views = $data['views'] ?? 0;
+
+        if($views == 0 && $lastStat->views) {
+            $views = $lastStat->views;
+        }
+
+        $site = $article->site;
+
+        $countStats = ArticleStat::query()->where('article_id', $article->id)->count();
 
         $viewsSpeed = null;
 
