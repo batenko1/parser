@@ -60,7 +60,7 @@ class UpdateArticleStatJob implements ShouldQueue
         $data = $this->getArticleStat($article->site->name, $article->link);
         $views = $data['views'] ?? 0;
 
-        if($views == 0 && $lastStat->views) {
+        if($views == 0 && $lastStat?->views) {
             $views = $lastStat->views;
         }
 
