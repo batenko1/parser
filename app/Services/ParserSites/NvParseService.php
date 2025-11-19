@@ -51,10 +51,16 @@ class NvParseService implements ParserSitesInterface
                 $host = parse_url($link, PHP_URL_HOST); // biz.nv.ua или nv.ua
                 $viewsUrl = "https://{$host}/get_article_views/{$articleId}.html";
 
+
                 $viewsResp = Http::withHeaders([
-                    'User-Agent' => 'Mozilla/5.0',
-                    'Accept'     => 'text/plain, */*',
-                    'Referer'    => $link,
+                    'User-Agent' => 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:131.0) Gecko/20100101 Firefox/131.0',
+                    'Accept' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
+                    'Accept-Language' => 'en-US,en;q=0.5',
+                    'Accept-Encoding' => 'gzip, deflate, br',
+                    'Connection' => 'keep-alive',
+                    'Referer' => $link,
+                    'Upgrade-Insecure-Requests' => '1',
+                    'DNT' => '1'
                 ])->get($viewsUrl);
 
                 if ($viewsResp->successful()) {
