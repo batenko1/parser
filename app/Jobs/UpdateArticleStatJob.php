@@ -54,6 +54,7 @@ class UpdateArticleStatJob implements ShouldQueue
             ->where('article_id', $article->id)
             ->latest('id')
             ->where('views', '>', 0)
+            ->whereNull('error')
             ->first();
 
         $data = $this->getArticleStat($article->site->name, $article->link);

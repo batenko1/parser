@@ -192,10 +192,11 @@
                                     @foreach($article->stats()->orderBy('id')->get() as $stat)
                                         <li class="flex justify-between border-b pb-1">
                                             <span>{{ $stat->created_at->format('d.m.Y H:i') }}</span>
-                                            <span class="font-semibold">{{ $stat->views }} / {{ $stat->views_speed ? round($stat->views_speed) : 0 }} в годину</span>
-                                            @if($stat->error)
-                                                <span>{{ $stat->error }}</span>
-                                            @endif
+                                            <span class="flex font-semibold">
+                                                 @if($stat->error)
+                                                    <span>{{ $stat->error }}</span>
+                                                @endif
+                                                {{ $stat->views }} / {{ $stat->views_speed ? round($stat->views_speed) : 0 }} в годину</span>
                                         </li>
                                     @endforeach
                                     @if($article->stats->count() === 0)
