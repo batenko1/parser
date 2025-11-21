@@ -20,6 +20,7 @@ class ParserResultController extends Controller
         $sitesFilter = $request->get('sites');
         $sortFilter = $request->get('sort');
         $dateRange = $request->get('date_range');
+        $search = $request->get('search');
 
         $filterRocket = $request->get('filter_rocket');
         $filterFire = $request->get('filter_fire') ?? ($user && $user->role_id == 2) ? 1 : false;
@@ -63,6 +64,9 @@ class ParserResultController extends Controller
             })
             ->when($filterFire, function ($query) {
                 $query->where('speed_x', '>', 0);
+            })
+            ->when($search, function ($query) use($search) {
+                $query->where('title', 'ilike', "%{$search}%");
             })
             ->when($filterRocket, function ($query) {
                 $query->where('is_very_fast', true);

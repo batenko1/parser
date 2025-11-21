@@ -13,6 +13,7 @@
             <h1 class="text-2xl font-bold mb-6">Результати парсингу новин</h1>
 
             <form method="GET" action="{{ route('index') }}" class="mb-6" id="filter-form">
+                <input type="text" name="search" placeholder="Пошук" value="{{ request('search') }}">
                 <input type="hidden" name="sort" id="sort" value="{{ request('sort') }}">
                 <div id="sites-hidden-container">
                     @foreach($selectedSites as $sid)
