@@ -11,9 +11,7 @@
     <div id="protected-content">
         <div class="container mx-auto py-6">
             <h1 class="text-2xl font-bold mb-6">Результати парсингу новин</h1>
-
             <form method="GET" action="{{ route('index') }}" class="mb-6" id="filter-form">
-                <input type="text" name="search" placeholder="Пошук" value="{{ request('search') }}">
                 <input type="hidden" name="sort" id="sort" value="{{ request('sort') }}">
                 <div id="sites-hidden-container">
                     @foreach($selectedSites as $sid)
@@ -22,7 +20,13 @@
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
-                    <div class="col-span-3">
+                    <div class="col-span-1">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Пошук</label>
+                        <input
+                            class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring focus:ring-indigo-200"
+                            type="text" name="search" placeholder="Пошук" value="{{ request('search') }}">
+                    </div>
+                    <div class="col-span-2">
                         <label class="block text-sm font-medium text-gray-700 mb-1">Діапазон дат</label>
                         <input type="text" name="date_range" id="date-range"
                                value="{{ request('date_range') }}"
