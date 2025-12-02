@@ -125,26 +125,36 @@ class ParserResultController extends Controller
     {
         $user = auth()->user();
 
-        $articles = $this->getArticles($request, $user, false);
-
-        $response = new StreamedResponse(function() use ($articles) {
+        $response = new StreamedResponse(function() use ($request, $user) {
             $handle = fopen('php://output', 'w');
 
-            fputcsv($handle, ['Дата публікації', 'Сайт', 'Заголовок', 'Перегляди', 'Швидкість за годину', 'Ракета', 'Вогонь', 'Title', 'Meta description']);
+            // Заголовок CSV
+            fputcsv($handle, [
+                'Дата публікації', 'Сайт', 'Заголовок', 'Перегляди',
+                'Швидкість за годину', 'Ракета', 'Вогонь', 'Title', 'Meta description'
+            ]);
 
-            foreach ($articles as $article) {
-                fputcsv($handle, [
-                    $article->created_at->format('d.m.Y H:i'),
-                    $article->site->name,
-                    html_entity_decode((string) $article->title, ENT_QUOTES | ENT_HTML5, 'UTF-8'),
-                    $article->stats->sortByDesc('id')->first()->views ?? 0,
-                    round($article->stats->sortByDesc('id')->first()->views_speed ?? 0),
-                    $article->is_very_fast ? 'Ракета': '',
-                    $article->speed_x > 0 ? 'Огонь': '',
-                    $article->meta_title,
-                    $articles->meta_description
-                ]);
-            }
+            // Получаем статьи лениво чанками
+            $this->getArticles($request, $user)
+                ->with(['site', 'stats']) // жадная загрузка связей
+                ->orderBy('id')
+                ->chunk(1000, function($articles) use ($handle) {
+                    foreach ($articles as $article) {
+                        $lastStat = $article->stats->sortByDesc('id')->first();
+
+                        fputcsv($handle, [
+                            $article->created_at->format('d.m.Y H:i'),
+                            $article->site->name,
+                            html_entity_decode((string) $article->title, ENT_QUOTES | ENT_HTML5, 'UTF-8'),
+                            $lastStat->views ?? 0,
+                            round($lastStat->views_speed ?? 0),
+                            $article->is_very_fast ? 'Ракета' : '',
+                            $article->speed_x > 0 ? 'Огонь' : '',
+                            $article->meta_title,
+                            $article->meta_description
+                        ]);
+                    }
+                });
 
             fclose($handle);
         });
@@ -154,4 +164,5 @@ class ParserResultController extends Controller
 
         return $response;
     }
+
 }
