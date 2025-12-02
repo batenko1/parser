@@ -14,7 +14,7 @@ class ParserResultController extends Controller
     {
         $user = auth()->user();
 
-        if(!$user) {
+        if (!$user) {
             return redirect()->route('login');
         }
 
@@ -78,7 +78,7 @@ class ParserResultController extends Controller
             ->when($filterFire, function ($query) {
                 $query->where('speed_x', '>', 0);
             })
-            ->when($search, function ($query) use($search) {
+            ->when($search, function ($query) use ($search) {
                 $query->where('title', 'ilike', "%{$search}%");
             })
             ->when($filterRocket, function ($query) {
@@ -86,7 +86,7 @@ class ParserResultController extends Controller
             })
             ->when($sortFilter, function ($query) use ($fieldSort, $typeSort) {
 
-                if($fieldSort === 'views'){
+                if ($fieldSort === 'views') {
                     $query->addSelect([
                         'last_views' => DB::table('article_stats')
                             ->select('views')
@@ -97,7 +97,7 @@ class ParserResultController extends Controller
                         ->orderBy('last_views', $typeSort);
                 }
 
-                if($fieldSort === 'speed'){
+                if ($fieldSort === 'speed') {
                     $subquery = DB::table('article_stats')
                         ->select('views_speed')
                         ->whereColumn('article_stats.article_id', 'articles.id')
@@ -114,7 +114,7 @@ class ParserResultController extends Controller
                 $query->orderBy('created_at', 'desc');
             });
 
-        if($isPaginate) {
+        if ($isPaginate) {
             return $articles->paginate(100);
         }
 
@@ -128,7 +128,7 @@ class ParserResultController extends Controller
 
         $user = auth()->user();
 
-        $response = new StreamedResponse(function() use ($request, $user) {
+        $response = new StreamedResponse(function () use ($request, $user) {
             $handle = fopen('php://output', 'w');
 
             fputcsv($handle, [
@@ -136,26 +136,23 @@ class ParserResultController extends Controller
                 'Швидкість за годину', 'Ракета', 'Вогонь', 'Title', 'Meta description'
             ]);
 
-            $this->getArticles($request, $user)
-                ->with(['site', 'stats'])
-                ->orderBy('id')
-                ->chunk(1000, function($articles) use ($handle) {
-                    foreach ($articles as $article) {
-                        $lastStat = $article->stats->sortByDesc('id')->first();
+            $articles = $this->getArticles($request, $user, false);
 
-                        fputcsv($handle, [
-                            $article->created_at->format('d.m.Y H:i'),
-                            $article->site->name,
-                            html_entity_decode((string) $article->title, ENT_QUOTES | ENT_HTML5, 'UTF-8'),
-                            $lastStat->views ?? 0,
-                            round($lastStat->views_speed ?? 0),
-                            $article->is_very_fast ? 'Ракета' : '',
-                            $article->speed_x > 0 ? 'Огонь' : '',
-                            $article->meta_title,
-                            $article->meta_description
-                        ]);
-                    }
-                });
+            foreach ($articles as $article) {
+                $lastStat = $article->stats->sortByDesc('id')->first();
+
+                fputcsv($handle, [
+                    $article->created_at->format('d.m.Y H:i'),
+                    $article->site->name,
+                    html_entity_decode((string)$article->title, ENT_QUOTES | ENT_HTML5, 'UTF-8'),
+                    $lastStat->views ?? 0,
+                    round($lastStat->views_speed ?? 0),
+                    $article->is_very_fast ? 'Ракета' : '',
+                    $article->speed_x > 0 ? 'Огонь' : '',
+                    $article->meta_title,
+                    $article->meta_description
+                ]);
+            }
 
             fclose($handle);
         });
