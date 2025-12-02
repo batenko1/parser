@@ -118,25 +118,26 @@ class ParserResultController extends Controller
             return $articles->paginate(100);
         }
 
-        return $articles->get();
+        return $articles->limit(50000)->get();
     }
 
     public function export(Request $request)
     {
+        set_time_limit(300);
+        ini_set('memory_limit', '1024M');
+
         $user = auth()->user();
 
         $response = new StreamedResponse(function() use ($request, $user) {
             $handle = fopen('php://output', 'w');
 
-            // Заголовок CSV
             fputcsv($handle, [
                 'Дата публікації', 'Сайт', 'Заголовок', 'Перегляди',
                 'Швидкість за годину', 'Ракета', 'Вогонь', 'Title', 'Meta description'
             ]);
 
-            // Получаем статьи лениво чанками
             $this->getArticles($request, $user)
-                ->with(['site', 'stats']) // жадная загрузка связей
+                ->with(['site', 'stats'])
                 ->orderBy('id')
                 ->chunk(1000, function($articles) use ($handle) {
                     foreach ($articles as $article) {
