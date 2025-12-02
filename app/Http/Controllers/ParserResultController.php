@@ -6,6 +6,7 @@ use App\Models\Article;
 use App\Models\Site;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class ParserResultController extends Controller
 {
@@ -16,6 +17,22 @@ class ParserResultController extends Controller
         if(!$user) {
             return redirect()->route('login');
         }
+
+        $query = Site::query();
+
+        $sites = $query->get();
+
+        $articles = $this->getArticles($request, $user, true);
+
+
+        return view('index', [
+            'articles' => $articles,
+            'sites' => $sites,
+        ]);
+    }
+
+    private function getArticles($request, $user, $isPaginate = true)
+    {
 
         $sitesFilter = $request->get('sites');
         $sortFilter = $request->get('sort');
@@ -47,10 +64,6 @@ class ParserResultController extends Controller
                 break;
 
         }
-
-        $query = Site::query();
-
-        $sites = $query->get();
 
         $articles = Article::query()
             ->with(['stats', 'site'])
@@ -99,13 +112,46 @@ class ParserResultController extends Controller
             })
             ->when(!$sortFilter, function ($query) {
                 $query->orderBy('created_at', 'desc');
-            })
-            ->paginate(100);
+            });
 
+        if($isPaginate) {
+            return $articles->paginate(100);
+        }
 
-        return view('index', [
-            'articles' => $articles,
-            'sites' => $sites,
-        ]);
+        return $articles->get();
+    }
+
+    public function export(Request $request)
+    {
+        $user = auth()->user();
+
+        $articles = $this->getArticles($request, $user, false);
+
+        $response = new StreamedResponse(function() use ($articles) {
+            $handle = fopen('php://output', 'w');
+
+            fputcsv($handle, ['Дата публікації', 'Сайт', 'Заголовок', 'Перегляди', 'Швидкість за годину', 'Ракета', 'Вогонь', 'Title', 'Meta description']);
+
+            foreach ($articles as $article) {
+                fputcsv($handle, [
+                    $article->created_at->format('d.m.Y H:i'),
+                    $article->site->name,
+                    html_entity_decode((string) $article->title, ENT_QUOTES | ENT_HTML5, 'UTF-8'),
+                    $article->stats->sortByDesc('id')->first()->views ?? 0,
+                    round($article->stats->sortByDesc('id')->first()->views_speed ?? 0),
+                    $article->is_very_fast ? 'Ракета': '',
+                    $article->speed_x > 0 ? 'Огонь': '',
+                    $article->meta_title,
+                    $articles->meta_description
+                ]);
+            }
+
+            fclose($handle);
+        });
+
+        $response->headers->set('Content-Type', 'text/csv');
+        $response->headers->set('Content-Disposition', 'attachment; filename="articles.csv"');
+
+        return $response;
     }
 }

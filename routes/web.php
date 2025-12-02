@@ -6,6 +6,8 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', [ParserResultController::class, 'index'])->name('index');
 
+Route::get('export-data', [ParserResultController::class, 'export'])->name('export-data');
+
 Route::match(['get', 'post'], 'login', [AuthController::class, 'login'])->name('login');
 
 //Route::get('sites', [SiteController::class, 'index'])->name('sites');

@@ -40,6 +40,16 @@
                             Застосувати
                         </button>
                     </div>
+
+
+                    <div>
+                        <button
+                            type="button"
+                            id="export-button"
+                            class="w-full bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700">
+                            Експорт данів
+                        </button>
+                    </div>
                 </div>
 
                 @if(request('filter_rocket'))
@@ -49,7 +59,6 @@
                     <input type="hidden" name="filter_fire" value="1">
                 @endif
             </form>
-
 
 
             <div class="overflow-x-auto bg-white shadow-md rounded-lg relative">
@@ -62,23 +71,29 @@
                             <div class="flex items-center gap-1 relative">
                                 <span>Сайт</span>
                                 <button type="button" id="filterButton" class="relative p-1 hover:bg-gray-200 rounded">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-600" viewBox="0 0 24 24" fill="currentColor">
-                                        <path d="M3 5a1 1 0 0 1 1-1h16a1 1 0 0 1 .8 1.6l-6.2 8.27a1 1 0 0 0-.2.6V19a1 1 0 0 1-1.45.9l-3-1.5A1 1 0 0 1 9 17.5v-3.03a1 1 0 0 0-.2-.6L2.2 5.6A1 1 0 0 1 3 5z"/>
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-600"
+                                         viewBox="0 0 24 24" fill="currentColor">
+                                        <path
+                                            d="M3 5a1 1 0 0 1 1-1h16a1 1 0 0 1 .8 1.6l-6.2 8.27a1 1 0 0 0-.2.6V19a1 1 0 0 1-1.45.9l-3-1.5A1 1 0 0 1 9 17.5v-3.03a1 1 0 0 0-.2-.6L2.2 5.6A1 1 0 0 1 3 5z"/>
                                     </svg>
                                     @if(count($selectedSites))
-                                        <span class="absolute -top-1 -right-1 inline-flex items-center justify-center text-[10px] leading-none w-4 h-4 rounded-full bg-indigo-600 text-white">
+                                        <span
+                                            class="absolute -top-1 -right-1 inline-flex items-center justify-center text-[10px] leading-none w-4 h-4 rounded-full bg-indigo-600 text-white">
                                         {{ count($selectedSites) }}
                                     </span>
                                     @endif
                                 </button>
                             </div>
 
-                            <div id="filterPopup" class="hidden absolute z-50 mt-2 w-[320px] bg-white border border-gray-200 rounded-lg shadow-lg p-2">
+                            <div id="filterPopup"
+                                 class="hidden absolute z-50 mt-2 w-[320px] bg-white border border-gray-200 rounded-lg shadow-lg p-2">
                                 <div class="px-2 py-1 text-[11px] text-gray-500 uppercase">Обрати сайти</div>
                                 <div class="max-h-64 overflow-auto px-1 py-1 space-y-1">
                                     @foreach($sites as $site)
-                                        <label class="flex items-center gap-2 px-2 py-1 rounded hover:bg-gray-50 cursor-pointer">
-                                            <input type="checkbox" class="site-checkbox rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                                        <label
+                                            class="flex items-center gap-2 px-2 py-1 rounded hover:bg-gray-50 cursor-pointer">
+                                            <input type="checkbox"
+                                                   class="site-checkbox rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
                                                    value="{{ $site->id }}"
                                                 {{ in_array((string)$site->id, $selectedSites) ? 'checked' : '' }}>
                                             <span class="text-sm text-gray-700">{{ $site->name }}</span>
@@ -86,14 +101,17 @@
                                     @endforeach
                                 </div>
                                 <div class="flex items-center justify-between gap-2 mt-2 px-2 pb-1">
-                                    <button type="button" id="resetSites" class="text-sm text-gray-600 hover:text-gray-900 underline">
+                                    <button type="button" id="resetSites"
+                                            class="text-sm text-gray-600 hover:text-gray-900 underline">
                                         Скинути
                                     </button>
                                     <div class="flex gap-2">
-                                        <button type="button" id="closePopup" class="px-3 py-1.5 rounded border text-sm hover:bg-gray-50">
+                                        <button type="button" id="closePopup"
+                                                class="px-3 py-1.5 rounded border text-sm hover:bg-gray-50">
                                             Закрити
                                         </button>
-                                        <button type="button" id="applySites" class="px-3 py-1.5 rounded bg-indigo-600 text-white text-sm hover:bg-indigo-700">
+                                        <button type="button" id="applySites"
+                                                class="px-3 py-1.5 rounded bg-indigo-600 text-white text-sm hover:bg-indigo-700">
                                             Застосувати
                                         </button>
                                     </div>
@@ -107,36 +125,48 @@
                             <div class="flex items-center gap-1">
                                 <span>Перегляди</span>
                                 @if(request('sort') === 'views_asc')
-                                    <svg class="w-3 h-3 text-indigo-600" fill="currentColor" viewBox="0 0 20 20"><path d="M10 3l5 7H5l5-7z"/></svg>
+                                    <svg class="w-3 h-3 text-indigo-600" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M10 3l5 7H5l5-7z"/>
+                                    </svg>
                                 @elseif(request('sort') === 'views_desc')
-                                    <svg class="w-3 h-3 text-indigo-600" fill="currentColor" viewBox="0 0 20 20"><path d="M10 17l-5-7h10l-5 7z"/></svg>
+                                    <svg class="w-3 h-3 text-indigo-600" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M10 17l-5-7h10l-5 7z"/>
+                                    </svg>
                                 @else
-                                    <svg class="w-3 h-3 text-gray-400" fill="currentColor" viewBox="0 0 20 20"><path d="M10 3l5 7H5l5-7zm0 14l-5-7h10l-5 7z"/></svg>
+                                    <svg class="w-3 h-3 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M10 3l5 7H5l5-7zm0 14l-5-7h10l-5 7z"/>
+                                    </svg>
                                 @endif
                             </div>
                         </th>
 
                         @if(auth()->user()->role_id == 1)
-                        <th class="px-4 py-3 cursor-pointer select-none"
-                            onclick="toggleSort('speed')">
-                            <div class="flex items-center gap-1">
-                                <span>Швидкість за годину</span>
-                                @if(request('sort') === 'speed_asc')
-                                    <svg class="w-3 h-3 text-indigo-600" fill="currentColor" viewBox="0 0 20 20"><path d="M10 3l5 7H5l5-7z"/></svg>
-                                @elseif(request('sort') === 'speed_desc')
-                                    <svg class="w-3 h-3 text-indigo-600" fill="currentColor" viewBox="0 0 20 20"><path d="M10 17l-5-7h10l-5 7z"/></svg>
-                                @else
-                                    <svg class="w-3 h-3 text-gray-400" fill="currentColor" viewBox="0 0 20 20"><path d="M10 3l5 7H5l5-7zm0 14l-5-7h10l-5 7z"/></svg>
-                                @endif
-                            </div>
-                        </th>
+                            <th class="px-4 py-3 cursor-pointer select-none"
+                                onclick="toggleSort('speed')">
+                                <div class="flex items-center gap-1">
+                                    <span>Швидкість за годину</span>
+                                    @if(request('sort') === 'speed_asc')
+                                        <svg class="w-3 h-3 text-indigo-600" fill="currentColor" viewBox="0 0 20 20">
+                                            <path d="M10 3l5 7H5l5-7z"/>
+                                        </svg>
+                                    @elseif(request('sort') === 'speed_desc')
+                                        <svg class="w-3 h-3 text-indigo-600" fill="currentColor" viewBox="0 0 20 20">
+                                            <path d="M10 17l-5-7h10l-5 7z"/>
+                                        </svg>
+                                    @else
+                                        <svg class="w-3 h-3 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                                            <path d="M10 3l5 7H5l5-7zm0 14l-5-7h10l-5 7z"/>
+                                        </svg>
+                                    @endif
+                                </div>
+                            </th>
                         @endif
 
                         <th class="px-4 py-3 select-none text-center">
                             🚀
                             <input
                                 @if(auth()->user()->role_id == 2) disabled @endif
-                                type="checkbox"
+                            type="checkbox"
                                 id="filter-rocket"
                                 {{ request('filter_rocket') ? 'checked' : '' }}
                                 class="ml-1 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
@@ -146,7 +176,7 @@
                             🔥
                             <input
                                 @if(auth()->user()->role_id == 2) checked disabled @endif
-                                type="checkbox"
+                            type="checkbox"
                                 id="filter-fire"
                                 {{ request('filter_fire') ? 'checked' : '' }}
                                 class="ml-1 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
@@ -165,13 +195,14 @@
                                 <a
                                     rel="nofollow noreferrer"
                                     href="{{ $article->link }}"
-                                   onclick="event.stopPropagation()"
-                                   target="_blank" class="hover:underline">{{ html_entity_decode((string) $article->title, ENT_QUOTES | ENT_HTML5, 'UTF-8') }}
+                                    onclick="event.stopPropagation()"
+                                    target="_blank"
+                                    class="hover:underline">{{ html_entity_decode((string) $article->title, ENT_QUOTES | ENT_HTML5, 'UTF-8') }}
                                 </a>
-                                </td>
+                            </td>
                             <td class="px-4 py-3">{{ $article->stats->sortByDesc('id')->first()->views ?? 0 }}</td>
                             @if(auth()->user()->role_id == 1)
-                            <td class="px-4 py-3">{{ round($article->stats->sortByDesc('id')->first()->views_speed ?? 0) }}</td>
+                                <td class="px-4 py-3">{{ round($article->stats->sortByDesc('id')->first()->views_speed ?? 0) }}</td>
                             @endif
                             <td class="px-4 py-3">
                                 @if($article->is_very_fast)
@@ -192,35 +223,37 @@
                         <tr id="details-{{ $idx }}" class="hidden bg-gray-50">
                             <td colspan="7" class="px-6 py-4">
                                 @if(auth()->user()->role_id == 1)
-                                <h3 class="font-semibold text-gray-700 mb-2">Історія переглядів</h3>
-                                <ul class="space-y-1 text-sm text-gray-600">
-                                    @foreach($article->stats()->orderBy('id')->get() as $stat)
-                                        <li class="flex justify-between border-b pb-1">
-                                            <span>{{ $stat->created_at->format('d.m.Y H:i') }}</span>
-                                            <span class="flex font-semibold">
+                                    <h3 class="font-semibold text-gray-700 mb-2">Історія переглядів</h3>
+                                    <ul class="space-y-1 text-sm text-gray-600">
+                                        @foreach($article->stats()->orderBy('id')->get() as $stat)
+                                            <li class="flex justify-between border-b pb-1">
+                                                <span>{{ $stat->created_at->format('d.m.Y H:i') }}</span>
+                                                <span class="flex font-semibold">
                                                  @if($stat->error)
-                                                    <span>{{ $stat->error }}</span>&nbsp;
-                                                @endif
-                                                {{ $stat->views }} / {{ $stat->views_speed ? round($stat->views_speed) : 0 }} в годину</span>
-                                        </li>
-                                    @endforeach
-                                    @if($article->stats->count() === 0)
-                                        <li class="text-gray-500">Немає даних</li>
-                                    @endif
-                                </ul>
+                                                        <span>{{ $stat->error }}</span>&nbsp;
+                                                    @endif
+                                                    {{ $stat->views }} / {{ $stat->views_speed ? round($stat->views_speed) : 0 }} в годину</span>
+                                            </li>
+                                        @endforeach
+                                        @if($article->stats->count() === 0)
+                                            <li class="text-gray-500">Немає даних</li>
+                                        @endif
+                                    </ul>
                                 @endif
 
                                 <br>
 
                                 <div style="margin-bottom: 10px;">
-                                    <b>Title</b> ({{ \Illuminate\Support\Str::length($article->meta_title) }} символов) -
+                                    <b>Title</b> ({{ \Illuminate\Support\Str::length($article->meta_title) }} символов)
+                                    -
                                     {{ $article->meta_title }}
                                 </div>
 
                                 <hr>
 
                                 <div style="margin-bottom: 10px;">
-                                    <b>Description</b> ({{ \Illuminate\Support\Str::length($article->meta_description) }} символов) -
+                                    <b>Description</b>
+                                    ({{ \Illuminate\Support\Str::length($article->meta_description) }} символов) -
                                     {{ $article->meta_description }}
                                 </div>
 
@@ -229,7 +262,8 @@
                                     <hr>
 
                                     <div>
-                                        <b>Text</b> ({{ preg_match_all('/[\p{L}\p{N}_]+/u', strip_tags($article->text)) }} слів) -
+                                        <b>Text</b>
+                                        ({{ preg_match_all('/[\p{L}\p{N}_]+/u', strip_tags($article->text)) }} слів) -
                                         {!! $article->text !!}
                                     </div>
                                 @endif
@@ -246,19 +280,19 @@
         </div>
     </div>
 
-{{--    <div id="password-screen" class="flex items-center justify-center min-h-screen bg-gray-100">--}}
-{{--        <div class="bg-white shadow-lg rounded-lg p-6 w-80 text-center">--}}
-{{--            <h2 class="text-lg font-bold mb-4">🔒 Введіть пароль</h2>--}}
-{{--            <input type="password" id="page-password"--}}
-{{--                   class="w-full border border-gray-300 rounded px-3 py-2 mb-4 focus:ring focus:ring-indigo-200"--}}
-{{--                   placeholder="Пароль">--}}
-{{--            <button onclick="checkPassword()"--}}
-{{--                    class="w-full bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700">--}}
-{{--                Увійти--}}
-{{--            </button>--}}
-{{--            <p id="error-msg" class="text-red-500 text-sm mt-2 hidden">Невірний пароль</p>--}}
-{{--        </div>--}}
-{{--    </div>--}}
+    {{--    <div id="password-screen" class="flex items-center justify-center min-h-screen bg-gray-100">--}}
+    {{--        <div class="bg-white shadow-lg rounded-lg p-6 w-80 text-center">--}}
+    {{--            <h2 class="text-lg font-bold mb-4">🔒 Введіть пароль</h2>--}}
+    {{--            <input type="password" id="page-password"--}}
+    {{--                   class="w-full border border-gray-300 rounded px-3 py-2 mb-4 focus:ring focus:ring-indigo-200"--}}
+    {{--                   placeholder="Пароль">--}}
+    {{--            <button onclick="checkPassword()"--}}
+    {{--                    class="w-full bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700">--}}
+    {{--                Увійти--}}
+    {{--            </button>--}}
+    {{--            <p id="error-msg" class="text-red-500 text-sm mt-2 hidden">Невірний пароль</p>--}}
+    {{--        </div>--}}
+    {{--    </div>--}}
 
     <script>
         function toggleRow(idx) {
@@ -328,10 +362,12 @@
 
         const CORRECT_PASSWORD = "12345";
         const STORAGE_KEY = "page_access_granted";
+
         function showContent() {
             document.getElementById("password-screen").style.display = "none";
             document.getElementById("protected-content").style.display = "block";
         }
+
         function checkPassword() {
             const input = document.getElementById("page-password").value;
             if (input === CORRECT_PASSWORD) {
@@ -341,6 +377,7 @@
                 document.getElementById("error-msg").classList.remove("hidden");
             }
         }
+
         document.addEventListener("DOMContentLoaded", () => {
             if (localStorage.getItem(STORAGE_KEY) === "true") showContent();
         });
@@ -405,5 +442,21 @@
             rocket.addEventListener('change', () => toggleHiddenInput('filter_rocket', rocket.checked));
             fire.addEventListener('change', () => toggleHiddenInput('filter_fire', fire.checked));
         });
+
+
+
+        document.getElementById('export-button').addEventListener('click', function() {
+            const form = document.getElementById('filter-form');
+
+            const formData = new FormData(form);
+
+            const params = new URLSearchParams();
+            for (const [key, value] of formData.entries()) {
+                params.append(key, value);
+            }
+
+            window.location.href = "{{ route('export-data') }}?" + params.toString();
+        });
+
     </script>
 @endsection
