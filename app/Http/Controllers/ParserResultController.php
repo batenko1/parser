@@ -131,6 +131,8 @@ class ParserResultController extends Controller
         $response = new StreamedResponse(function () use ($request, $user) {
             $handle = fopen('php://output', 'w');
 
+            fwrite($handle, "\xEF\xBB\xBF");
+
             fputcsv($handle, [
                 'Дата публікації', 'Сайт', 'Заголовок', 'Перегляди',
                 'Швидкість за годину', 'Ракета', 'Вогонь', 'Title', 'Meta description'
@@ -157,7 +159,7 @@ class ParserResultController extends Controller
             fclose($handle);
         });
 
-        $response->headers->set('Content-Type', 'text/csv');
+        $response->headers->set('Content-Type', 'text/csv; charset=UTF-8');
         $response->headers->set('Content-Disposition', 'attachment; filename="articles.csv"');
 
         return $response;
