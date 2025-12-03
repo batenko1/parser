@@ -42,14 +42,16 @@
                     </div>
 
 
+                    @if(auth()->user()->role_id == 1)
                     <div>
                         <button
                             type="button"
                             id="export-button"
                             class="w-full bg-yellow-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700">
-                            Експорт данів
+                            Експорт CSV
                         </button>
                     </div>
+                    @endif
                 </div>
 
                 @if(request('filter_rocket'))
